@@ -24,7 +24,7 @@ public class ConfigHandler {
     private static final String CATEGORY_GENERAL = "general";
     public static Configuration cfg;
     private static String[] blacklist = new String[] {};
-    public static ArrayList<Item> blacklisted = new ArrayList<>();
+    public static ArrayList<Item> blacklisted;
 
     public static void readConfig() {
         try {
@@ -47,6 +47,8 @@ public class ConfigHandler {
     }
 
     private static void initBlacklist() {
+
+        blacklisted = new ArrayList<>();
 
         if (blacklist.length > 0) {
 

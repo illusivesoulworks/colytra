@@ -8,8 +8,8 @@
 
 package c4.colytra.common;
 
-import c4.colytra.Colytra;
 import c4.colytra.core.util.ColytraUtil;
+import c4.colytra.core.util.ConfigHandler;
 import c4.colytra.proxy.CommonProxy;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -27,7 +27,6 @@ import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.apache.logging.log4j.Level;
 import vazkii.quark.vanity.feature.DyableElytra;
 
 import java.util.Map;
@@ -87,12 +86,13 @@ public class CommonEventHandler {
 
         ItemStack left = evt.getLeft();
         boolean isChestplate = EntityLiving.getSlotForItemStack(left) == EntityEquipmentSlot.CHEST;
+        boolean isBlacklisted = ConfigHandler.blacklisted.contains(left.getItem());
 
         if (isChestplate) {
 
             ItemStack right = evt.getRight();
 
-            if (right.getItem() instanceof ItemElytra && !(left.getItem() instanceof ItemElytra)) {
+            if (right.getItem() instanceof ItemElytra && !(left.getItem() instanceof ItemElytra) && !isBlacklisted) {
 
                 if (!left.hasTagCompound() || (left.hasTagCompound() && !left.getTagCompound().hasKey("Elytra Upgrade"))) {
                     handleElytraUpgrade(evt);
@@ -113,7 +113,6 @@ public class CommonEventHandler {
         ItemStack output = handleEnchantments(evt);
         NBTTagCompound compound = output.getOrCreateSubCompound("Elytra Upgrade");
         compound.setInteger("Active", 1);
-        Colytra.logger.log(Level.INFO, elytra.getMaxDamage() + " " + elytra.getItemDamage());
         compound.setInteger("Durability", elytra.getMaxDamage() - elytra.getItemDamage());
         output.setRepairCost(Math.max(chestplate.getRepairCost(), elytra.getRepairCost()) * 2 + 1);
         int xpCost = 30;

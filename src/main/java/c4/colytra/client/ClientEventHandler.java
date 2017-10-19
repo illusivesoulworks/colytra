@@ -27,6 +27,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import vazkii.quark.vanity.feature.DyableElytra;
 
+import java.util.List;
+
 public class ClientEventHandler {
 
     @SubscribeEvent
@@ -53,11 +55,19 @@ public class ClientEventHandler {
             NBTTagCompound compound = e.getItemStack().getSubCompound("Elytra Upgrade");
             boolean isActive = compound.getInteger("Active") == 1;
             int durability = compound.getInteger("Durability");
+            List<String> tooltip = e.getToolTip();
+            String tip = "";
 
             if (isActive) {
-                e.getToolTip().add(TextFormatting.AQUA + (TextFormatting.ITALIC + "Elytra - (" + durability + "/432)"));
+                tip = TextFormatting.AQUA + "Elytra";
             } else {
-                e.getToolTip().add("Elytra - (" + durability + "/432)");
+                tip = "Elytra";
+            }
+
+            if (durability > 1) {
+                tooltip.add(tip + ": " + durability + "/432");
+            } else {
+                tooltip.add(tip + ": Broken");
             }
 
             if (CommonProxy.quarkLoaded) {
