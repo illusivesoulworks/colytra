@@ -50,28 +50,33 @@ public class ClientEventHandler {
     @SubscribeEvent
     public void tooltipHandler(ItemTooltipEvent e) {
 
-        if (e.getItemStack().hasTagCompound() && e.getItemStack().getTagCompound().hasKey("Elytra Upgrade")) {
+        ItemStack itemstack = e.getItemStack();
 
-            NBTTagCompound compound = e.getItemStack().getSubCompound("Elytra Upgrade");
-            boolean isActive = compound.getInteger("Active") == 1;
-            int durability = compound.getInteger("Durability");
-            List<String> tooltip = e.getToolTip();
-            String tip = "";
+        if (itemstack.hasTagCompound()) {
 
-            if (isActive) {
-                tip = TextFormatting.AQUA + "Elytra";
-            } else {
-                tip = "Elytra";
+            if (itemstack.getTagCompound().hasKey("Elytra Upgrade")) {
+
+                NBTTagCompound compound = itemstack.getSubCompound("Elytra Upgrade");
+                boolean isActive = compound.getInteger("Active") == 1;
+                int durability = compound.getInteger("Durability");
+                List<String> tooltip = e.getToolTip();
+                String tip = "";
+
+                if (isActive) {
+                    tip = TextFormatting.AQUA + "Elytra";
+                } else {
+                    tip = "Elytra";
+                }
+
+                if (durability > 1) {
+                    tooltip.add(tip + ": " + durability + "/432");
+                } else {
+                    tooltip.add(tip + ": Broken");
+                }
             }
 
-            if (durability > 1) {
-                tooltip.add(tip + ": " + durability + "/432");
-            } else {
-                tooltip.add(tip + ": Broken");
-            }
-
-            if (CommonProxy.quarkLoaded) {
-                addElytraColorTooltip(e, e.getItemStack().getTagCompound());
+            if (CommonProxy.quarkLoaded && itemstack.getItem() != Items.ELYTRA) {
+                addElytraColorTooltip(e, itemstack.getTagCompound());
             }
         }
     }
@@ -79,7 +84,7 @@ public class ClientEventHandler {
     @Optional.Method(modid = "quark")
     private static void addElytraColorTooltip(ItemTooltipEvent evt, NBTTagCompound compound) {
 
-        if (compound.hasKey(DyableElytra.TAG_ELYTRA_DYE) && (evt.getItemStack().getItem() == CommonProxy.elytraBauble || (EntityLiving.getSlotForItemStack(evt.getItemStack()) == EntityEquipmentSlot.CHEST) && evt.getItemStack().getItem() != Items.ELYTRA)) {
+        if (compound.hasKey(DyableElytra.TAG_ELYTRA_DYE)) {
             int color = compound.getInteger(DyableElytra.TAG_ELYTRA_DYE);
             EnumDyeColor dye = EnumDyeColor.byDyeDamage(color);
             if(dye != EnumDyeColor.WHITE)

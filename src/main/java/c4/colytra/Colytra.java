@@ -28,7 +28,7 @@ public class Colytra {
 
     public static final String MODID = "colytra";
     public static final String MODNAME = "Colytra";
-    public static final String MODVER = "1.0.0";
+    public static final String MODVER = "1.0.1";
 
     @SidedProxy(clientSide = "c4.colytra.proxy.ClientProxy", serverSide = "c4.colytra.proxy.CommonProxy")
     public static CommonProxy proxy;
