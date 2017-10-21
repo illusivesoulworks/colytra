@@ -8,6 +8,7 @@
 
 package c4.colytra.common;
 
+import c4.colytra.common.items.ItemElytraBauble;
 import c4.colytra.core.util.ColytraUtil;
 import c4.colytra.core.util.ConfigHandler;
 import c4.colytra.proxy.CommonProxy;
@@ -38,12 +39,18 @@ public class CommonEventHandler {
 
         if (!e.getEntityPlayer().world.isRemote) {
 
-            ItemStack colytra = ColytraUtil.findColytraChest(e.getEntityLiving());
+            ItemStack colytra = ColytraUtil.findAnyColytra(e.getEntityLiving());
 
-            if (colytra != ItemStack.EMPTY && !(colytra.getItem() instanceof ItemElytra) && EnchantmentHelper.getEnchantmentLevel(Enchantments.MENDING, colytra) > 0) {
+            if ((colytra.getItem() instanceof ItemElytraBauble || (colytra.hasTagCompound() && colytra.getTagCompound().hasKey("Elytra Upgrade"))) && EnchantmentHelper.getEnchantmentLevel(Enchantments.MENDING, colytra) > 0) {
 
-                NBTTagCompound compound = colytra.getSubCompound("Elytra Upgrade");
-                int durability = compound.getInteger("Durability");
+                boolean isBauble = colytra.getItem() instanceof ItemElytraBauble;
+                int durability = 0;
+
+                if (isBauble) {
+                    durability = colytra.getMaxDamage() - colytra.getItemDamage();
+                } else {
+                    durability = colytra.getSubCompound("Elytra Upgrade").getInteger("Durability");
+                }
 
                 if (durability >= 432) {
                     return;
@@ -59,7 +66,12 @@ public class CommonEventHandler {
                     player.onItemPickup(xpOrb, 1);
                     int i = Math.min(xpToDurability(xpOrb.xpValue), 431 - durability);
                     xpOrb.xpValue -= durabilityToXp(i);
-                    compound.setInteger("Durability", durability + i);
+
+                    if (isBauble) {
+                        colytra.setItemDamage(colytra.getMaxDamage() - (durability + i));
+                    } else {
+                        colytra.getSubCompound("Elytra Upgrade").setInteger("Durability", durability + i);
+                    }
 
                     if (xpOrb.xpValue > 0) {
                         player.addExperience(xpOrb.xpValue);
