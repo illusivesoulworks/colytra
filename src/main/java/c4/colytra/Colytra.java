@@ -20,15 +20,15 @@ import org.apache.logging.log4j.Logger;
         modid = Colytra.MODID,
         name = Colytra.MODNAME,
         version = Colytra.MODVER,
-        dependencies = "required-after:forge@[14.23.0.2491,);after:baubles;after:quark",
+        dependencies = "required-after:forge@[14.22.1.2478,);after:baubles;after:quark",
         guiFactory = "c4."+ Colytra.MODID+".client.gui.GuiFactory",
-        acceptedMinecraftVersions = "[1.12.2, 1.13)")
+        acceptedMinecraftVersions = "[1.12.1, 1.13)")
 
 public class Colytra {
 
     public static final String MODID = "colytra";
     public static final String MODNAME = "Colytra";
-    public static final String MODVER = "1.0.2";
+    public static final String MODVER = "1.0.3";
 
     @SidedProxy(clientSide = "c4.colytra.proxy.ClientProxy", serverSide = "c4.colytra.proxy.CommonProxy")
     public static CommonProxy proxy;
