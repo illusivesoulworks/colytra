@@ -62,8 +62,8 @@ public class ColytraUtil {
                 case "Infinite": return isActive;
                 case "Chestplate": {
                     IEnergyStorage energyStorage = itemstack.getCapability(CapabilityEnergy.ENERGY, null);
-                    if (energyStorage != null) {
-                        return energyStorage.getEnergyStored() > 0 && isActive;
+                    if (energyStorage != null && energyStorage.getEnergyStored() > 0) {
+                        return isActive;
                     } else {
                         return itemstack.isItemStackDamageable() && itemstack.getItemDamage() < itemstack.getMaxDamage() - 1 && isActive;
                     }
