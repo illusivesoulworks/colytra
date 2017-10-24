@@ -32,7 +32,7 @@ public class LayerColytraCape implements LayerRenderer<AbstractClientPlayer> {
         {
             ItemStack itemstack = ColytraUtil.findAnyColytra(entitylivingbaseIn);
 
-            if (!itemstack.isEmpty())
+            if (itemstack.isEmpty())
             {
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 this.playerRenderer.bindTexture(entitylivingbaseIn.getLocationCape());
