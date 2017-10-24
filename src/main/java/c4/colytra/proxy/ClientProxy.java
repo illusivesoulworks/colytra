@@ -10,10 +10,13 @@ package c4.colytra.proxy;
 
 import c4.colytra.client.ClientEventHandler;
 import c4.colytra.client.renderer.entity.layers.LayerColytra;
+import c4.colytra.client.renderer.entity.layers.LayerColytraCape;
 import c4.colytra.core.util.ClientUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.*;
+import net.minecraft.client.renderer.entity.layers.LayerCape;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.model.ModelLoader;
@@ -23,8 +26,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 
+import java.util.List;
 import java.util.Map;
 
 @Mod.EventBusSubscriber(Side.CLIENT)
@@ -38,11 +43,11 @@ public class ClientProxy extends CommonProxy {
         super.init(e);
         MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
         ClientUtil.init();
-        addColytraRenderLayer();
     }
 
     public void postInit(FMLPostInitializationEvent e) {
         super.postInit(e);
+        editRenderLayers();
     }
 
     @SubscribeEvent
@@ -53,12 +58,24 @@ public class ClientProxy extends CommonProxy {
         }
     }
 
-    private static void addColytraRenderLayer() {
+    private static void editRenderLayers() {
         Minecraft mc = Minecraft.getMinecraft();
         RenderManager manager = mc.getRenderManager();
-        Map<String, RenderPlayer> skinMap = manager.getSkinMap();
-        skinMap.get("default").addLayer(new LayerColytra(skinMap.get("default")));
-        skinMap.get("slim").addLayer(new LayerColytra(skinMap.get("slim")));
+        Map<String, RenderPlayer> renderPlayerMap = manager.getSkinMap();
+        for(RenderPlayer render : renderPlayerMap.values()) {
+            render.addLayer(new LayerColytra(render));
+            List<LayerRenderer> list = ReflectionHelper.getPrivateValue(RenderLivingBase.class, render, "h", "field_177097_h", "layerRenderers");
+            LayerRenderer remove = null;
+            for(LayerRenderer layer : list) {
+                if (layer instanceof LayerCape) {
+                    remove = layer;
+                    break;
+                }
+            }
+
+            list.remove(remove);
+            list.add(new LayerColytraCape(render));
+        }
         Render<?> render = manager.getEntityClassRenderObject(EntityArmorStand.class);
         ((RenderLivingBase<?>) render).addLayer(new LayerColytra((RenderLivingBase<?>) render));
     }

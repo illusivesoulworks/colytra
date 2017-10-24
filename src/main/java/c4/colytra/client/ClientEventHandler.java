@@ -9,6 +9,7 @@
 package c4.colytra.client;
 
 import c4.colytra.core.util.ClientUtil;
+import c4.colytra.core.util.ConfigHandler;
 import c4.colytra.network.CPacketToggleColytra;
 import c4.colytra.network.NetworkHandler;
 import c4.colytra.proxy.CommonProxy;
@@ -68,10 +69,14 @@ public class ClientEventHandler {
                     tip = "Elytra";
                 }
 
-                if (durability > 1) {
-                    tooltip.add(tip + ": " + durability + "/432");
+                if (ConfigHandler.durabilityMode.equals("Normal")) {
+                    if (durability > 1) {
+                        tooltip.add(tip + ": " + durability + "/432");
+                    } else {
+                        tooltip.add(tip + ": Broken");
+                    }
                 } else {
-                    tooltip.add(tip + ": Broken");
+                    tooltip.add(tip);
                 }
             }
 

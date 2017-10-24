@@ -16,7 +16,7 @@ import net.minecraft.client.model.ModelElytra;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderLivingBase;
 import net.minecraft.client.renderer.entity.layers.LayerArmorBase;
-import net.minecraft.client.renderer.entity.layers.LayerElytra;
+import net.minecraft.client.renderer.entity.layers.LayerRenderer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.init.Items;
@@ -32,14 +32,15 @@ import vazkii.quark.vanity.feature.DyableElytra;
 import java.awt.*;
 
 @SideOnly(Side.CLIENT)
-public class LayerColytra extends LayerElytra {
+public class LayerColytra implements LayerRenderer<EntityLivingBase> {
 
     private static final ResourceLocation TEXTURE_ELYTRA = new ResourceLocation("textures/entity/elytra.png");
+    protected final RenderLivingBase<?> renderPlayer;
     private final ModelElytra modelElytra = new ModelElytra();
 
     public LayerColytra(RenderLivingBase<?> renderPlayer)
     {
-        super(renderPlayer);
+        this.renderPlayer = renderPlayer;
     }
 
     @Override
@@ -101,6 +102,11 @@ public class LayerColytra extends LayerElytra {
             GlStateManager.disableBlend();
             GlStateManager.popMatrix();
         }
+    }
+
+    public boolean shouldCombineTextures()
+    {
+        return false;
     }
 
     @Optional.Method(modid = "quark")

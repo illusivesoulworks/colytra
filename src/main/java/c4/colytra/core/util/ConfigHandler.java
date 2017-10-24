@@ -25,6 +25,8 @@ public class ConfigHandler {
     public static Configuration cfg;
     private static String[] blacklist = new String[] {};
     public static ArrayList<Item> blacklisted;
+    public static String durabilityMode = "Normal";
+    private static String[] durabilityModeList = new String[] {"Normal", "Infinite", "Chestplate"};
 
     public static void readConfig() {
         try {
@@ -43,6 +45,12 @@ public class ConfigHandler {
     private static void initConfig() {
         cfg.addCustomCategoryComment(CATEGORY_GENERAL, "General configuration");
         blacklist = cfg.getStringList("Blacklist", CATEGORY_GENERAL, blacklist, "A list of items that cannot be attached with an elytra");
+        durabilityMode = cfg.getString("Colytra Durability Mode", CATEGORY_GENERAL, durabilityMode,
+                "How to handle durability for elytras attached to chestplates\n" +
+                        "Normal - Elytras on chestplates will use their own durability\n" +
+                        "Infinite - Elytras on chestplates will not use any durability\n" +
+                        "Chestplate - Elytras on chestplates will use chestplate durability",
+                        durabilityModeList);
         initBlacklist();
     }
 

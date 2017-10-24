@@ -17,6 +17,8 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.common.Optional;
 
 public class ColytraUtil {
@@ -56,7 +58,18 @@ public class ColytraUtil {
             int durability = compound.getInteger("Durability");
             boolean isActive = compound.getInteger("Active") == 1;
 
-            return durability > 1 && isActive;
+            switch(ConfigHandler.durabilityMode) {
+                case "Infinite": return isActive;
+                case "Chestplate": {
+                    IEnergyStorage energyStorage = itemstack.getCapability(CapabilityEnergy.ENERGY, null);
+                    if (energyStorage != null) {
+                        return energyStorage.getEnergyStored() > 0 && isActive;
+                    } else {
+                        return itemstack.isItemStackDamageable() && itemstack.getItemDamage() < itemstack.getMaxDamage() - 1 && isActive;
+                    }
+                }
+                default: return durability > 1 && isActive;
+            }
 
         } else {
 

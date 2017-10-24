@@ -10,6 +10,7 @@ package c4.colytra.core.asm;
 
 import c4.colytra.Colytra;
 import c4.colytra.core.util.ColytraUtil;
+import c4.colytra.core.util.ConfigHandler;
 import c4.colytra.network.CPacketFallFlying;
 import c4.colytra.network.NetworkHandler;
 import net.minecraft.enchantment.EnchantmentDurability;
@@ -22,6 +23,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.energy.CapabilityEnergy;
+import net.minecraftforge.energy.EnergyStorage;
+import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
 
@@ -48,7 +52,11 @@ public class ASMHooks {
                 if (!entityLivingBase.world.isRemote && (getTicksElytraFlying(entityLivingBase) + 1) % 20 == 0)
                 {
                     if (!(colytra.getItem() instanceof ItemElytra)) {
-                        colytraChestDrain(colytra);
+                        if (ConfigHandler.durabilityMode.equals("Normal")) {
+                            colytraChestDrain(colytra);
+                        } else if (ConfigHandler.durabilityMode.equals("Chestplate")) {
+                            colytraDamageChest(colytra, entityLivingBase);
+                        }
                     } else {
                         colytra.damageItem(1, entityLivingBase);
                     }
@@ -84,6 +92,20 @@ public class ASMHooks {
             NetworkHandler.INSTANCE.sendToServer(new CPacketFallFlying());
         }
 
+    }
+
+    private static void colytraDamageChest(ItemStack stack, EntityLivingBase entityLivingBase) {
+        IEnergyStorage energyStorage = stack.getCapability(CapabilityEnergy.ENERGY, null);
+        if (energyStorage != null && energyStorage.getEnergyStored() > 0) {
+            if (entityLivingBase instanceof EntityPlayer) {
+                EntityPlayer player = (EntityPlayer) entityLivingBase;
+                if (!player.capabilities.isCreativeMode) {
+                    energyStorage.extractEnergy(1000, false);
+                }
+            }
+        } else {
+            stack.damageItem(1, entityLivingBase);
+        }
     }
 
     private static void colytraChestDrain(ItemStack stack) {

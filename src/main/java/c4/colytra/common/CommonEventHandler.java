@@ -44,10 +44,12 @@ public class CommonEventHandler {
             if ((colytra.getItem() instanceof ItemElytraBauble || (colytra.hasTagCompound() && colytra.getTagCompound().hasKey("Elytra Upgrade"))) && EnchantmentHelper.getEnchantmentLevel(Enchantments.MENDING, colytra) > 0) {
 
                 boolean isBauble = colytra.getItem() instanceof ItemElytraBauble;
-                int durability = 0;
+                int durability;
 
                 if (isBauble) {
                     durability = colytra.getMaxDamage() - colytra.getItemDamage();
+                } else if (!ConfigHandler.durabilityMode.equals("Normal")) {
+                    return;
                 } else {
                     durability = colytra.getSubCompound("Elytra Upgrade").getInteger("Durability");
                 }
