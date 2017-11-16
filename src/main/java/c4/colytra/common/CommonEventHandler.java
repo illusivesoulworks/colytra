@@ -66,7 +66,7 @@ public class CommonEventHandler {
 
                     player.xpCooldown = 2;
                     player.onItemPickup(xpOrb, 1);
-                    int i = Math.min(xpToDurability(xpOrb.xpValue), 431 - durability);
+                    int i = Math.min(xpToDurability(xpOrb.xpValue), 432 - durability);
                     xpOrb.xpValue -= durabilityToXp(i);
 
                     if (isBauble) {

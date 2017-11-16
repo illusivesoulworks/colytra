@@ -8,6 +8,7 @@
 
 package c4.colytra.client;
 
+import c4.colytra.Colytra;
 import c4.colytra.core.util.ClientUtil;
 import c4.colytra.core.util.ConfigHandler;
 import c4.colytra.network.CPacketToggleColytra;
@@ -26,6 +27,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.apache.logging.log4j.Level;
 import vazkii.quark.vanity.feature.DyableElytra;
 
 import java.util.List;
