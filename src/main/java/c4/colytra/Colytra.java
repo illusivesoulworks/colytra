@@ -9,11 +9,14 @@
 package c4.colytra;
 
 import c4.colytra.proxy.CommonProxy;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLFingerprintViolationEvent;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
 @Mod(
@@ -22,7 +25,8 @@ import org.apache.logging.log4j.Logger;
         version = Colytra.MODVER,
         dependencies = "required-after:forge@[14.22.1.2478,);after:baubles;after:quark",
         guiFactory = "c4."+ Colytra.MODID+".client.gui.GuiFactory",
-        acceptedMinecraftVersions = "[1.12.1, 1.13)")
+        acceptedMinecraftVersions = "[1.12.1, 1.13)",
+        certificateFingerprint = "5d5b8aee896a4f5ea3f3114784742662a67ad32f")
 
 public class Colytra {
 
@@ -52,5 +56,10 @@ public class Colytra {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent e) {
         proxy.postInit(e);
+    }
+
+    @Mod.EventHandler
+    public void onFingerPrintViolation(FMLFingerprintViolationEvent evt) {
+        FMLLog.log.log(Level.ERROR, "Invalid fingerprint detected! The file " + evt.getSource().getName() + " may have been tampered with. This version will NOT be supported by the author!");
     }
 }
