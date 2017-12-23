@@ -100,13 +100,18 @@ public class CommonEventHandler {
 
         ItemStack left = evt.getLeft();
         boolean isChestplate = EntityLiving.getSlotForItemStack(left) == EntityEquipmentSlot.CHEST;
-        boolean isBlacklisted = ConfigHandler.blacklisted.contains(left.getItem());
+        boolean isAllowed = false;
+        if (ConfigHandler.itemPermissionMode.equals("Blacklist")) {
+            isAllowed = !ConfigHandler.blacklisted.contains(left.getItem());
+        } else if (ConfigHandler.itemPermissionMode.equals("Whitelist")) {
+            isAllowed = ConfigHandler.whitelisted.contains(left.getItem());
+        }
 
         if (isChestplate) {
 
             ItemStack right = evt.getRight();
 
-            if (right.getItem() instanceof ItemElytra && !(left.getItem() instanceof ItemElytra) && !isBlacklisted) {
+            if (right.getItem() instanceof ItemElytra && !(left.getItem() instanceof ItemElytra) && isAllowed) {
 
                 if (!left.hasTagCompound() || (left.hasTagCompound() && !left.getTagCompound().hasKey("Elytra Upgrade"))) {
                     handleElytraUpgrade(evt);

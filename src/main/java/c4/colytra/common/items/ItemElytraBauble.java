@@ -9,7 +9,9 @@
 package c4.colytra.common.items;
 
 import baubles.api.BaubleType;
+import baubles.api.BaublesApi;
 import baubles.api.IBauble;
+import baubles.api.cap.IBaublesItemHandler;
 import c4.colytra.Colytra;
 import c4.colytra.core.util.ColytraUtil;
 import net.minecraft.entity.EntityLivingBase;
@@ -17,8 +19,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+import javax.annotation.Nonnull;
 
 @Optional.Interface(modid = "baubles", iface = "baubles.api.IBauble", striprefs = true)
 public class ItemElytraBauble extends ItemElytra implements IBauble {
@@ -26,7 +34,30 @@ public class ItemElytraBauble extends ItemElytra implements IBauble {
     public ItemElytraBauble() {
         super();
         this.setRegistryName("elytra_bauble");
-        this.setUnlocalizedName(Colytra.MODID + ".elytra_bauble");
+        this.setUnlocalizedName("elytra");
+    }
+
+    @Nonnull
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
+
+        if(!world.isRemote) {
+
+            IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
+
+            for(int i = 0; i < baubles.getSlots(); i++) {
+                if(baubles.getStackInSlot(i).isEmpty() && baubles.isItemValidForSlot(i, player.getHeldItem(hand), player)) {
+                    baubles.setStackInSlot(i, player.getHeldItem(hand).copy());
+                    if(!player.isCreative()) {
+                        player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
+                    }
+                    this.onEquipped(player.getHeldItem(hand), player);
+                    break;
+                }
+            }
+        }
+
+        return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
     @Override

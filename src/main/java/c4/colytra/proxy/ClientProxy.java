@@ -12,6 +12,7 @@ import c4.colytra.client.ClientEventHandler;
 import c4.colytra.client.renderer.entity.layers.LayerColytra;
 import c4.colytra.client.renderer.entity.layers.LayerColytraCape;
 import c4.colytra.core.util.ClientUtil;
+import c4.colytra.core.util.ConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.entity.*;
@@ -53,7 +54,7 @@ public class ClientProxy extends CommonProxy {
     @SubscribeEvent
     public static void registerModels(ModelRegistryEvent e) {
 
-        if (CommonProxy.baublesLoaded) {
+        if (CommonProxy.baublesLoaded && !ConfigHandler.disableBauble) {
             ModelLoader.setCustomModelResourceLocation(CommonProxy.elytraBauble, 0, new ModelResourceLocation(CommonProxy.elytraBauble.getRegistryName(), "inventory"));
         }
     }

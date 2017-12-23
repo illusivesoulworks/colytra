@@ -41,10 +41,6 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent e) {
 
-        File directory = e.getModConfigurationDirectory();
-        config = new Configuration(new File(directory.getPath(), "colytra.cfg"));
-        ConfigHandler.readConfig();
-
         if (Loader.isModLoaded("baubles")) {
             baublesLoaded = true;
         }
@@ -52,6 +48,10 @@ public class CommonProxy {
         if (Loader.isModLoaded("quark")) {
             quarkLoaded = true;
         }
+
+        File directory = e.getModConfigurationDirectory();
+        config = new Configuration(new File(directory.getPath(), "colytra.cfg"));
+        ConfigHandler.readConfig();
     }
 
     public void init(FMLInitializationEvent e) {
@@ -66,7 +66,7 @@ public class CommonProxy {
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> e) {
 
-        if (baublesLoaded) {
+        if (baublesLoaded && !ConfigHandler.disableBauble) {
             elytraBauble = new ItemElytraBauble();
             e.getRegistry().register(elytraBauble);
         }
@@ -75,7 +75,7 @@ public class CommonProxy {
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> e) {
 
-        if (baublesLoaded) {
+        if (baublesLoaded && !ConfigHandler.disableBauble) {
             e.getRegistry().register((new RecipeElytraBauble(new ResourceLocation(Colytra.MODID, "elytraToBauble"), Items.ELYTRA, new ItemStack(CommonProxy.elytraBauble, 1))).setRegistryName("elytra_to_bauble_recipe"));
             e.getRegistry().register((new RecipeElytraBauble(new ResourceLocation(Colytra.MODID, "baubleToElytra"), CommonProxy.elytraBauble, new ItemStack(Items.ELYTRA, 1))).setRegistryName("bauble_to_elytra_recipe"));
         }

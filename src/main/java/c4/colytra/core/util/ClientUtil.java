@@ -25,7 +25,7 @@ public class ClientUtil {
     public static void init() {
         toggleColytra = new KeyBinding("key.colytra.toggle.desc", Keyboard.KEY_G, "key.colytra.category");
         ClientRegistry.registerKeyBinding(toggleColytra);
-        if (CommonProxy.quarkLoaded && CommonProxy.baublesLoaded) {
+        if (CommonProxy.quarkLoaded && CommonProxy.baublesLoaded && !ConfigHandler.disableBauble) {
             initElytraBaubleColors();
         }
     }

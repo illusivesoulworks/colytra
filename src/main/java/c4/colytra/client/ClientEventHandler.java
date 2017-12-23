@@ -22,7 +22,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.*;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -63,22 +63,24 @@ public class ClientEventHandler {
                 boolean isActive = compound.getInteger("Active") == 1;
                 int durability = compound.getInteger("Durability");
                 List<String> tooltip = e.getToolTip();
-                String tip = "";
+                ITextComponent tip;
+                Style style = new Style().setColor(TextFormatting.GRAY);
 
                 if (isActive) {
-                    tip = TextFormatting.AQUA + "Elytra";
-                } else {
-                    tip = "Elytra";
+                    style = style.setColor(TextFormatting.AQUA);
                 }
 
+                tip = new TextComponentTranslation("item.elytra.name").setStyle(style);
+
                 if (ConfigHandler.durabilityMode.equals("Normal")) {
+
                     if (durability > 1) {
-                        tooltip.add(tip + ": " + durability + "/432");
+                        tooltip.add(tip.appendText(": " + durability + "/432").getFormattedText());
                     } else {
-                        tooltip.add(tip + ": Broken");
+                        tooltip.add(tip.appendText(": " + new TextComponentTranslation("tooltip.colytra.broken")).getFormattedText());
                     }
                 } else {
-                    tooltip.add(tip);
+                    tooltip.add(tip.getFormattedText());
                 }
             }
 
