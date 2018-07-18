@@ -12,8 +12,8 @@ import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.cap.IBaublesItemHandler;
-import c4.colytra.Colytra;
-import c4.colytra.core.util.ColytraUtil;
+import c4.colytra.common.config.ConfigHandler;
+import c4.colytra.util.ColytraUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -42,12 +42,13 @@ public class ItemElytraBauble extends ItemElytra implements IBauble {
     public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, @Nonnull EnumHand hand) {
 
         if(!world.isRemote) {
-
             IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
 
             for(int i = 0; i < baubles.getSlots(); i++) {
+
                 if(baubles.getStackInSlot(i).isEmpty() && baubles.isItemValidForSlot(i, player.getHeldItem(hand), player)) {
                     baubles.setStackInSlot(i, player.getHeldItem(hand).copy());
+
                     if(!player.isCreative()) {
                         player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
                     }
@@ -56,7 +57,6 @@ public class ItemElytraBauble extends ItemElytra implements IBauble {
                 }
             }
         }
-
         return ActionResult.newResult(EnumActionResult.SUCCESS, player.getHeldItem(hand));
     }
 
@@ -73,8 +73,7 @@ public class ItemElytraBauble extends ItemElytra implements IBauble {
     public void onWornTick(ItemStack itemstack, EntityLivingBase player) {
 
         if (player instanceof EntityPlayer) {
-
-            ItemStack colytra = ColytraUtil.findColytraChest(player);
+            ItemStack colytra = ColytraUtil.wornColytra(player);
 
             if (colytra != ItemStack.EMPTY) {
                 ItemStack ret = itemstack.copy();
@@ -86,9 +85,7 @@ public class ItemElytraBauble extends ItemElytra implements IBauble {
 
     @Override
     public boolean canEquip(ItemStack itemstack, EntityLivingBase player) {
-
-        ItemStack colytra = ColytraUtil.findColytraChest(player);
-
+        ItemStack colytra = ColytraUtil.wornColytra(player);
         return colytra == ItemStack.EMPTY;
     }
 }

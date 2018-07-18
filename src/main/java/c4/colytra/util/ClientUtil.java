@@ -1,13 +1,14 @@
 /*
- * Copyright (c) 2017 <C4>
+ * Copyright (c) 2018 <C4>
  *
  * This Java class is distributed as a part of Colytra.
  * Colytra is open source and licensed under the GNU General Public License v3.
  * A copy of the license can be found here: https://www.gnu.org/licenses/gpl.txt
  */
 
-package c4.colytra.core.util;
+package c4.colytra.util;
 
+import c4.colytra.common.config.ConfigHandler;
 import c4.colytra.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -25,7 +26,7 @@ public class ClientUtil {
     public static void init() {
         toggleColytra = new KeyBinding("key.colytra.toggle.desc", Keyboard.KEY_G, "key.colytra.category");
         ClientRegistry.registerKeyBinding(toggleColytra);
-        if (CommonProxy.quarkLoaded && CommonProxy.baublesLoaded && !ConfigHandler.disableBauble) {
+        if (CommonProxy.quarkLoaded && CommonProxy.baublesLoaded && !ConfigHandler.baubles.disableBauble) {
             initElytraBaubleColors();
         }
     }

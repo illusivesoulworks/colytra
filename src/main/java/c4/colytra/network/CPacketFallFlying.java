@@ -8,7 +8,8 @@
 
 package c4.colytra.network;
 
-import c4.colytra.core.util.ColytraUtil;
+import c4.colytra.common.capabilities.CapabilityColytraFlying;
+import c4.colytra.util.ColytraUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
@@ -44,16 +45,22 @@ public class CPacketFallFlying implements IMessage {
 
                 if (!serverPlayer.onGround && serverPlayer.motionY < 0.0D && !serverPlayer.isElytraFlying() && !serverPlayer.isInWater())
                 {
-                    ItemStack colytra = ColytraUtil.findAnyColytra(serverPlayer);
+                    ItemStack colytra = ColytraUtil.wornElytra(serverPlayer);
 
                     if (colytra != ItemStack.EMPTY && ColytraUtil.isUsable(colytra) && colytra.getItem() != Items.ELYTRA)
                     {
-                        serverPlayer.setElytraFlying();
+                        CapabilityColytraFlying.IColytraFlying flying = CapabilityColytraFlying.getColytraCap(serverPlayer);
+                        if (flying != null) {
+                            flying.setColytraFlying();
+                        }
                     }
                 }
                 else
                 {
-                    serverPlayer.clearElytraFlying();
+                    CapabilityColytraFlying.IColytraFlying flying = CapabilityColytraFlying.getColytraCap(serverPlayer);
+                    if (flying != null) {
+                        flying.clearColytraFlying();
+                    }
                 }
             });
 

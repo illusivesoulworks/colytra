@@ -19,20 +19,16 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Logger;
 
-@Mod(
-        modid = Colytra.MODID,
+@Mod(   modid = Colytra.MODID,
         name = Colytra.MODNAME,
         version = Colytra.MODVER,
-        dependencies = "required-after:forge@[14.22.1.2478,);after:baubles;after:quark",
-        guiFactory = "c4."+ Colytra.MODID+".client.gui.GuiFactory",
+        dependencies = "required-after:forge@[14.23.4.2705,);after:baubles;after:quark",
         acceptedMinecraftVersions = "[1.12.1, 1.13)",
         certificateFingerprint = "5d5b8aee896a4f5ea3f3114784742662a67ad32f")
-
 public class Colytra {
-
     public static final String MODID = "colytra";
     public static final String MODNAME = "Colytra";
-    public static final String MODVER = "1.0.4.3";
+    public static final String MODVER = "1.1.0";
 
     @SidedProxy(clientSide = "c4.colytra.proxy.ClientProxy", serverSide = "c4.colytra.proxy.CommonProxy")
     public static CommonProxy proxy;
@@ -42,24 +38,24 @@ public class Colytra {
     public static Logger logger;
 
     @Mod.EventHandler
-    public void preInit(FMLPreInitializationEvent e) {
-
-        logger = e.getModLog();
-        proxy.preInit(e);
+    public void preInit(FMLPreInitializationEvent evt) {
+        logger = evt.getModLog();
+        proxy.preInit(evt);
     }
 
     @Mod.EventHandler
-    public void init(FMLInitializationEvent e) {
-        proxy.init(e);
+    public void init(FMLInitializationEvent evt) {
+        proxy.init(evt);
     }
 
     @Mod.EventHandler
-    public void postInit(FMLPostInitializationEvent e) {
-        proxy.postInit(e);
+    public void postInit(FMLPostInitializationEvent evt) {
+        proxy.postInit(evt);
     }
 
     @Mod.EventHandler
     public void onFingerPrintViolation(FMLFingerprintViolationEvent evt) {
-        FMLLog.log.log(Level.ERROR, "Invalid fingerprint detected! The file " + evt.getSource().getName() + " may have been tampered with. This version will NOT be supported by the author!");
+        FMLLog.log.log(Level.ERROR, "Invalid fingerprint detected! The file " + evt.getSource().getName()
+                + " may have been tampered with. This version will NOT be supported by the author!");
     }
 }

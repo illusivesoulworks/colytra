@@ -6,7 +6,7 @@
  * A copy of the license can be found here: https://www.gnu.org/licenses/gpl.txt
  */
 
-package c4.colytra.core.asm;
+package c4.colytra.asm;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.common.FMLLog;
@@ -70,10 +70,10 @@ public class ElytraTransformer implements IClassTransformer {
                 (MethodNode method, AbstractInsnNode node) -> {
 
                     InsnList toInject = new InsnList();
-                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/colytra/core/asm/ASMHooks", "updateColytra", "(Lnet/minecraft/entity/EntityLivingBase;)V"));
+                    toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/colytra/asm/ASMHooks", "updateColytra", "(Lnet/minecraft/entity/EntityLivingBase;)V"));
 
                     method.instructions.insert(node, toInject);
-                    method.instructions.remove(node);
 
                     return true;
                 })));
@@ -90,10 +90,10 @@ public class ElytraTransformer implements IClassTransformer {
                 (MethodNode method, AbstractInsnNode node) -> {
 
                     InsnList toInject = new InsnList();
-                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/colytra/core/asm/ASMHooks", "updateClientColytra", "(Lnet/minecraft/entity/EntityLivingBase;)V"));
                     toInject.add(new VarInsnNode(Opcodes.ALOAD, 0));
+                    toInject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "c4/colytra/asm/ASMHooks", "updateClientColytra", "(Lnet/minecraft/entity/EntityLivingBase;)V"));
 
-                    method.instructions.insertBefore(node.getPrevious(), toInject);
+                    method.instructions.insert(node, toInject);
 
                     return true;
                 })));

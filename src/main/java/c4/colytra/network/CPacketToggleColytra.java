@@ -8,6 +8,7 @@
 
 package c4.colytra.network;
 
+import c4.colytra.util.ColytraUtil;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -50,7 +51,7 @@ public class CPacketToggleColytra implements IMessage {
 
                 ItemStack stack = serverPlayer.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
 
-                if (stack.hasTagCompound() && stack.getTagCompound().hasKey("Elytra Upgrade")) {
+                if (ColytraUtil.hasElytraUpgrade(stack)) {
 
                     NBTTagCompound compound = stack.getSubCompound("Elytra Upgrade");
                     int isActive = compound.getInteger("Active");

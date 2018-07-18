@@ -65,7 +65,7 @@ public class RecipeElytraBauble extends ShapelessOreRecipe {
     }
 
     @Override
-    public boolean isHidden() {
+    public boolean isDynamic() {
         return true;
     }
 

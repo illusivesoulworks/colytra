@@ -6,15 +6,17 @@
  * A copy of the license can be found here: https://www.gnu.org/licenses/gpl.txt
  */
 
-package c4.colytra.core.asm;
+package c4.colytra.asm;
 
 import c4.colytra.Colytra;
-import c4.colytra.core.util.ColytraUtil;
-import c4.colytra.core.util.ConfigHandler;
+import c4.colytra.common.capabilities.CapabilityColytraFlying;
+import c4.colytra.common.config.ConfigHandler;
+import c4.colytra.util.ColytraUtil;
 import c4.colytra.network.CPacketFallFlying;
 import c4.colytra.network.NetworkHandler;
 import net.minecraft.enchantment.EnchantmentDurability;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -24,7 +26,6 @@ import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.energy.CapabilityEnergy;
-import net.minecraftforge.energy.EnergyStorage;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
@@ -39,66 +40,73 @@ public class ASMHooks {
 
     public static void updateColytra(EntityLivingBase entityLivingBase) {
 
-        boolean flag = entityLivingBase.isElytraFlying();
+        if (entityLivingBase.isElytraFlying()) {
+            return;
+        }
 
-        if (flag && !entityLivingBase.onGround && !entityLivingBase.isRiding())
-        {
-            ItemStack colytra = ColytraUtil.findAnyColytra(entityLivingBase);
+        CapabilityColytraFlying.IColytraFlying flying = CapabilityColytraFlying.getColytraCap(entityLivingBase);
+        if (flying == null) return;
+        boolean flag = flying.getColytraFlying();
 
-            if (colytra != ItemStack.EMPTY && ColytraUtil.isUsable(colytra))
-            {
+        if (flag && !entityLivingBase.onGround && !entityLivingBase.isRiding()) {
+            ItemStack colytra = ColytraUtil.wornElytra(entityLivingBase);
+
+            if (colytra != ItemStack.EMPTY && colytra.getItem() != Items.ELYTRA && ColytraUtil.isUsable(colytra)) {
                 flag = true;
 
-                if (!entityLivingBase.world.isRemote && (getTicksElytraFlying(entityLivingBase) + 1) % 20 == 0)
-                {
-                    if (!(colytra.getItem() instanceof ItemElytra)) {
-                        if (ConfigHandler.durabilityMode.equals("Normal")) {
-                            colytraChestDrain(colytra);
-                        } else if (ConfigHandler.durabilityMode.equals("Chestplate")) {
-                            colytraDamageChest(colytra, entityLivingBase);
+                if (!entityLivingBase.world.isRemote && (getTicksElytraFlying(entityLivingBase) + 1) % 20 == 0) {
+
+                    if (entityLivingBase instanceof EntityPlayer
+                            && !((EntityPlayer) entityLivingBase).capabilities.isCreativeMode) {
+
+                        if (!(colytra.getItem() instanceof ItemElytra)) {
+
+                            if (ConfigHandler.durabilityMode == ConfigHandler.DurabilityMode.NORMAL) {
+                                colytraDamageElytra(colytra);
+                            } else if (ConfigHandler.durabilityMode == ConfigHandler.DurabilityMode.CHESTPLATE) {
+                                colytraDamageChest(colytra, entityLivingBase);
+                            }
+                        } else {
+                            colytra.damageItem(1, entityLivingBase);
                         }
-                    } else {
-                        colytra.damageItem(1, entityLivingBase);
                     }
                 }
             }
-            else
-            {
+            else {
                 flag = false;
             }
         }
-        else
-        {
+        else {
             flag = false;
         }
 
-        if (!entityLivingBase.world.isRemote && entityLivingBase instanceof EntityPlayer)
-        {
+        if (!entityLivingBase.world.isRemote && entityLivingBase instanceof EntityPlayer) {
             EntityPlayerMP playerMP = (EntityPlayerMP) entityLivingBase;
 
             if (flag) {
+                flying.setColytraFlying();
                 playerMP.setElytraFlying();
             } else {
-                playerMP.clearElytraFlying();
+                flying.clearColytraFlying();
             }
         }
     }
 
     public static void updateClientColytra(EntityLivingBase entityLivingBase) {
-
-        ItemStack colytra = ColytraUtil.findAnyColytra(entityLivingBase);
+        ItemStack colytra = ColytraUtil.wornElytra(entityLivingBase);
 
         if (colytra != ItemStack.EMPTY && colytra.getItem() != Items.ELYTRA && ColytraUtil.isUsable(colytra)) {
             NetworkHandler.INSTANCE.sendToServer(new CPacketFallFlying());
         }
-
     }
 
     private static void colytraDamageChest(ItemStack stack, EntityLivingBase entityLivingBase) {
         IEnergyStorage energyStorage = stack.getCapability(CapabilityEnergy.ENERGY, null);
         if (energyStorage != null && energyStorage.getEnergyStored() > 0) {
+
             if (entityLivingBase instanceof EntityPlayer) {
                 EntityPlayer player = (EntityPlayer) entityLivingBase;
+
                 if (!player.capabilities.isCreativeMode) {
                     energyStorage.extractEnergy(1000, false);
                 }
@@ -108,13 +116,16 @@ public class ASMHooks {
         }
     }
 
-    private static void colytraChestDrain(ItemStack stack) {
-
+    private static void colytraDamageElytra(ItemStack stack) {
         int amount = 1;
         int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.UNBREAKING, stack);
 
         if (!EnchantmentDurability.negateDamage(stack, i, rand)) {
             NBTTagCompound compound = stack.getSubCompound("Elytra Upgrade");
+
+            if (compound == null) {
+                return;
+            }
             int durability = compound.getInteger("Durability");
             compound.setInteger("Durability", durability - amount);
         }

@@ -6,7 +6,7 @@
  * A copy of the license can be found here: https://www.gnu.org/licenses/gpl.txt
  */
 
-package c4.colytra.core.asm;
+package c4.colytra.asm;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 

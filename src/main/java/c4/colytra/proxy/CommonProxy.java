@@ -10,10 +10,12 @@ package c4.colytra.proxy;
 
 import c4.colytra.Colytra;
 import c4.colytra.common.CommonEventHandler;
+import c4.colytra.common.capabilities.CapabilityColytraFlying;
+import c4.colytra.common.config.ConfigHandler;
 import c4.colytra.common.crafting.recipe.RecipeElytraBauble;
 import c4.colytra.common.items.ItemElytraBauble;
-import c4.colytra.core.util.ConfigHandler;
 import c4.colytra.network.NetworkHandler;
+import c4.colytra.util.ColytraUtil;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -29,8 +31,6 @@ import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.io.File;
-
 @Mod.EventBusSubscriber
 public class CommonProxy {
 
@@ -41,22 +41,15 @@ public class CommonProxy {
 
     public void preInit(FMLPreInitializationEvent e) {
 
-        if (Loader.isModLoaded("baubles")) {
-            baublesLoaded = true;
-        }
-
-        if (Loader.isModLoaded("quark")) {
-            quarkLoaded = true;
-        }
-
-        File directory = e.getModConfigurationDirectory();
-        config = new Configuration(new File(directory.getPath(), "colytra.cfg"));
-        ConfigHandler.readConfig();
+        if (Loader.isModLoaded("baubles")) baublesLoaded = true;
+        if (Loader.isModLoaded("quark")) quarkLoaded = true;
+        ColytraUtil.initConfigItemList();
     }
 
     public void init(FMLInitializationEvent e) {
         MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
         NetworkHandler.init();
+        CapabilityColytraFlying.register();
     }
 
     public void postInit(FMLPostInitializationEvent e) {
@@ -66,7 +59,7 @@ public class CommonProxy {
     @SubscribeEvent
     public static void registerItems(RegistryEvent.Register<Item> e) {
 
-        if (baublesLoaded && !ConfigHandler.disableBauble) {
+        if (baublesLoaded && !ConfigHandler.baubles.disableBauble) {
             elytraBauble = new ItemElytraBauble();
             e.getRegistry().register(elytraBauble);
         }
@@ -75,7 +68,7 @@ public class CommonProxy {
     @SubscribeEvent
     public static void registerRecipes(RegistryEvent.Register<IRecipe> e) {
 
-        if (baublesLoaded && !ConfigHandler.disableBauble) {
+        if (baublesLoaded && !ConfigHandler.baubles.disableBauble) {
             e.getRegistry().register((new RecipeElytraBauble(new ResourceLocation(Colytra.MODID, "elytraToBauble"), Items.ELYTRA, new ItemStack(CommonProxy.elytraBauble, 1))).setRegistryName("elytra_to_bauble_recipe"));
             e.getRegistry().register((new RecipeElytraBauble(new ResourceLocation(Colytra.MODID, "baubleToElytra"), CommonProxy.elytraBauble, new ItemStack(Items.ELYTRA, 1))).setRegistryName("bauble_to_elytra_recipe"));
         }
