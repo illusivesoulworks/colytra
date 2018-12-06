@@ -97,7 +97,7 @@ public class EventHandlerClient {
             EnumDyeColor dye = EnumDyeColor.byDyeDamage(color);
 
             if(dye != EnumDyeColor.WHITE) {
-                evt.getToolTip().add(I18n.format("quark.dyedElytra", I18n.format("quark.dye." + dye.getUnlocalizedName())));
+                evt.getToolTip().add(I18n.format("quark.dyedElytra", I18n.format("quark.dye." + dye.getTranslationKey())));
             }
         }
     }

@@ -54,7 +54,7 @@ public class RecipeElytraBauble extends ShapelessOreRecipe {
 
         ItemStack result = output.copy();
         result.setItemDamage(damage);
-        if (!enchants.hasNoTags()) {
+        if (!enchants.isEmpty()) {
             result.setTagInfo("ench", enchants);
         }
         if (CommonProxy.quarkLoaded) {

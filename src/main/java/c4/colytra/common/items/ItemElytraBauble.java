@@ -34,7 +34,7 @@ public class ItemElytraBauble extends ItemElytra implements IBauble {
     public ItemElytraBauble() {
         super();
         this.setRegistryName("elytra_bauble");
-        this.setUnlocalizedName("elytra");
+        this.setTranslationKey("elytra");
     }
 
     @Nonnull
