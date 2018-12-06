@@ -36,6 +36,8 @@ import java.awt.*;
 public class LayerColytra implements LayerRenderer<EntityLivingBase> {
 
     private static final ResourceLocation TEXTURE_ELYTRA = new ResourceLocation("textures/entity/elytra.png");
+    private static final ResourceLocation QUARK_DYED_TEXTURE = new ResourceLocation("quark",
+            "textures/misc/elytra_dyed.png");
     protected final RenderLivingBase<?> renderPlayer;
     private final ModelElytra modelElytra = new ModelElytra();
 
@@ -54,9 +56,10 @@ public class LayerColytra implements LayerRenderer<EntityLivingBase> {
             if (!ClientUtil.shouldRenderColytra(colytra)) {
                 return;
             }
+            boolean quarkDyed = false;
 
             if (CommonProxy.quarkLoaded) {
-                setElytraColors(colytra);
+                quarkDyed = setElytraColors(colytra);
             } else {
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 GlStateManager.enableBlend();
@@ -71,9 +74,13 @@ public class LayerColytra implements LayerRenderer<EntityLivingBase> {
                 } else if (abstractclientplayer.hasPlayerInfo() && abstractclientplayer.getLocationCape() != null
                         && abstractclientplayer.isWearing(EnumPlayerModelParts.CAPE)) {
                     this.renderPlayer.bindTexture(abstractclientplayer.getLocationCape());
+                } else if (quarkDyed) {
+                    this.renderPlayer.bindTexture(QUARK_DYED_TEXTURE);
                 } else {
                     this.renderPlayer.bindTexture(TEXTURE_ELYTRA);
                 }
+            } else if (quarkDyed) {
+                this.renderPlayer.bindTexture(QUARK_DYED_TEXTURE);
             } else {
                 this.renderPlayer.bindTexture(TEXTURE_ELYTRA);
             }
@@ -111,7 +118,7 @@ public class LayerColytra implements LayerRenderer<EntityLivingBase> {
     }
 
     @Optional.Method(modid = "quark")
-    private void setElytraColors(ItemStack stack) {
+    private boolean setElytraColors(ItemStack stack) {
 
         int colorIndex = -1;
 
@@ -119,14 +126,16 @@ public class LayerColytra implements LayerRenderer<EntityLivingBase> {
              colorIndex = stack.getTagCompound().getInteger(DyableElytra.TAG_ELYTRA_DYE);
         }
 
-        if(colorIndex == -1 || colorIndex == 15)
+        if(colorIndex == -1 || colorIndex == 15) {
             GlStateManager.color(1F, 1F, 1F);
-        else {
+            return false;
+        } else {
             Color color = new Color(ItemDye.DYE_COLORS[colorIndex]);
             float r = color.getRed() / 255F;
             float g = color.getGreen() / 255F;
             float b = color.getBlue() / 255F;
             GlStateManager.color(r, g, b);
+            return true;
         }
     }
 }
