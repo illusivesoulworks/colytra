@@ -12,7 +12,6 @@ import baubles.api.BaubleType;
 import baubles.api.BaublesApi;
 import baubles.api.IBauble;
 import baubles.api.cap.IBaublesItemHandler;
-import c4.colytra.common.config.ConfigHandler;
 import c4.colytra.util.ColytraUtil;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -43,14 +42,15 @@ public class ItemElytraBauble extends ItemElytra implements IBauble {
 
         if(!world.isRemote) {
             IBaublesItemHandler baubles = BaublesApi.getBaublesHandler(player);
+            ItemStack stack = player.getHeldItem(hand);
 
             for(int i = 0; i < baubles.getSlots(); i++) {
 
-                if(baubles.getStackInSlot(i).isEmpty() && baubles.isItemValidForSlot(i, player.getHeldItem(hand), player)) {
-                    baubles.setStackInSlot(i, player.getHeldItem(hand).copy());
+                if(baubles.getStackInSlot(i).isEmpty() && baubles.isItemValidForSlot(i, stack, player)) {
+                    baubles.setStackInSlot(i, stack.copy());
 
                     if(!player.isCreative()) {
-                        player.inventory.setInventorySlotContents(player.inventory.currentItem, ItemStack.EMPTY);
+                        stack.setCount(0);
                     }
                     this.onEquipped(player.getHeldItem(hand), player);
                     break;
