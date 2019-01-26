@@ -130,7 +130,7 @@ public class CommonEventHandler {
         output.setRepairCost(Math.max(chestplate.getRepairCost(), elytra.getRepairCost()) * 2 + 1);
         int xpCost = 30;
 
-        if (!evt.getName().isEmpty() && !evt.getName().equals(chestplate.getDisplayName())) {
+        if (evt.getName() != null && !evt.getName().isEmpty() && !evt.getName().equals(chestplate.getDisplayName())) {
             output.setStackDisplayName(evt.getName());
             xpCost++;
         }
