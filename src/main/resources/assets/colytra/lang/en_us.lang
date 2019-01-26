@@ -1,6 +1,8 @@
 key.colytra.category=Colytra
 key.colytra.toggle.desc=Toggle Elytra
 tooltip.colytra.broken=Broken
+toggle.colytra.on=Elytra enabled
+toggle.colytra.off=Elytra disabled
 
 colytra.general.permissionmode=Permission Mode
 colytra.general.permissionmode.tooltip=Sets whether the Item List uses a blacklist or a whitelist

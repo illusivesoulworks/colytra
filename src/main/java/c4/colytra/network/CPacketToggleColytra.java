@@ -15,6 +15,7 @@ import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IThreadListener;
+import net.minecraft.util.text.TextComponentTranslation;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -57,8 +58,10 @@ public class CPacketToggleColytra implements IMessage {
                     int isActive = compound.getInteger("Active");
 
                     if (isActive == 1) {
+                        serverPlayer.sendStatusMessage(new TextComponentTranslation("toggle.colytra.off"), true);
                         compound.setInteger("Active", 0);
                     } else if (isActive == 0) {
+                        serverPlayer.sendStatusMessage(new TextComponentTranslation("toggle.colytra.on"), true);
                         compound.setInteger("Active", 1);
                     }
                 }
