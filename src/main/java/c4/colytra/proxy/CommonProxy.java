@@ -13,6 +13,7 @@ import c4.colytra.common.CommonEventHandler;
 import c4.colytra.common.capabilities.CapabilityColytraFlying;
 import c4.colytra.common.config.ConfigHandler;
 import c4.colytra.common.crafting.recipe.RecipeElytraBauble;
+import c4.colytra.common.crafting.recipe.RecipeSeparateColytra;
 import c4.colytra.common.items.ItemElytraBauble;
 import c4.colytra.network.NetworkHandler;
 import c4.colytra.util.ColytraUtil;
@@ -72,5 +73,6 @@ public class CommonProxy {
             e.getRegistry().register((new RecipeElytraBauble(new ResourceLocation(Colytra.MODID, "elytraToBauble"), Items.ELYTRA, new ItemStack(CommonProxy.elytraBauble, 1))).setRegistryName("elytra_to_bauble_recipe"));
             e.getRegistry().register((new RecipeElytraBauble(new ResourceLocation(Colytra.MODID, "baubleToElytra"), CommonProxy.elytraBauble, new ItemStack(Items.ELYTRA, 1))).setRegistryName("bauble_to_elytra_recipe"));
         }
+        e.getRegistry().register(new RecipeSeparateColytra());
     }
 }

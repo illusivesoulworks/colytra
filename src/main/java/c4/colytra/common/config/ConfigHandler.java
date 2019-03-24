@@ -24,6 +24,10 @@ import java.util.ArrayList;
 @Config(modid = Colytra.MODID)
 public class ConfigHandler {
 
+    @Name("Allow Colytra Separation")
+    @Comment("True to allow separating elytras from chestplates in the crafting table, otherwise false")
+    public static boolean separateColytra = false;
+
     @Name("Permission Mode")
     @Comment("Sets whether the Item List uses a blacklist or a whitelist")
     public static PermissionMode permissionMode = PermissionMode.BLACKLIST;
