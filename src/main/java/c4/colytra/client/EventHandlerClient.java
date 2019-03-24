@@ -19,6 +19,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.text.*;
@@ -36,7 +37,7 @@ public class EventHandlerClient {
     public void onToggleColytra(InputEvent.KeyInputEvent e) {
 
         if (ClientUtil.toggleColytra.isPressed()) {
-            ItemStack stack = Minecraft.getMinecraft().player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+            ItemStack stack = ColytraUtil.wornElytra(Minecraft.getMinecraft().player);
 
             if (ColytraUtil.hasElytraUpgrade(stack)) {
                 NBTTagCompound compound = stack.getSubCompound("Elytra Upgrade");
@@ -46,6 +47,8 @@ public class EventHandlerClient {
                 }
                 int isActive = compound.getInteger("Active");
                 NetworkHandler.INSTANCE.sendToServer(new CPacketToggleColytra(isActive));
+            } else if (stack.getItem() instanceof ItemElytra && stack.getItem() != Items.ELYTRA) {
+                NetworkHandler.INSTANCE.sendToServer(new CPacketToggleColytra());
             }
         }
     }
@@ -53,6 +56,13 @@ public class EventHandlerClient {
     @SubscribeEvent
     public void tooltipHandler(ItemTooltipEvent e) {
         ItemStack itemstack = e.getItemStack();
+
+        if (itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("Active")) {
+
+            if (itemstack.getTagCompound().getInteger("Active") == 0) {
+                e.getToolTip().add("Disabled");
+            }
+        }
 
         if (ColytraUtil.hasElytraUpgrade(itemstack)) {
             NBTTagCompound compound = itemstack.getSubCompound("Elytra Upgrade");

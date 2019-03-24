@@ -88,4 +88,9 @@ public class ItemElytraBauble extends ItemElytra implements IBauble {
         ItemStack colytra = ColytraUtil.wornColytra(player);
         return colytra == ItemStack.EMPTY;
     }
+
+    @Override
+    public boolean willAutoSync(ItemStack itemstack, EntityLivingBase player) {
+        return true;
+    }
 }

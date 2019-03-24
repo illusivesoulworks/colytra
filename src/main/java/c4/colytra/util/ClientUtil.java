@@ -9,6 +9,7 @@
 package c4.colytra.util;
 
 import c4.colytra.common.config.ConfigHandler;
+import c4.colytra.common.items.ItemElytraBauble;
 import c4.colytra.proxy.CommonProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -33,7 +34,10 @@ public class ClientUtil {
 
     public static boolean shouldRenderColytra(ItemStack stack) {
 
-       return !(stack.hasTagCompound() && stack.getTagCompound().hasKey("Elytra Upgrade") && stack.getSubCompound("Elytra Upgrade").getInteger("Active") == 0);
+        if (stack.getItem() instanceof ItemElytraBauble) {
+            return !stack.hasTagCompound() || stack.getTagCompound().hasKey("Active") && stack.getTagCompound().getInteger("Active") == 1;
+        }
+        return !(stack.hasTagCompound() && stack.getTagCompound().hasKey("Elytra Upgrade") && stack.getSubCompound("Elytra Upgrade").getInteger("Active") == 0);
     }
 
     @Optional.Method(modid = "quark")

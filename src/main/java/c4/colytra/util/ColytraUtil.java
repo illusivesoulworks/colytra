@@ -72,6 +72,8 @@ public class ColytraUtil {
                 default: return durability > 1 && isActive;
             }
 
+        } else if (itemstack.hasTagCompound() && itemstack.getTagCompound().hasKey("Active")) {
+            return itemstack.getTagCompound().getInteger("Active") == 1 && itemstack.getItemDamage() < itemstack.getMaxDamage() - 1;
         } else {
             return itemstack.getItemDamage() < itemstack.getMaxDamage() - 1;
         }

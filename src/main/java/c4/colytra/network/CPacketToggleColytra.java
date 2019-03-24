@@ -50,7 +50,7 @@ public class CPacketToggleColytra implements IMessage {
 
                 EntityPlayerMP serverPlayer = ctx.getServerHandler().player;
 
-                ItemStack stack = serverPlayer.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
+                ItemStack stack = ColytraUtil.wornElytra(serverPlayer);
 
                 if (ColytraUtil.hasElytraUpgrade(stack)) {
 
@@ -64,6 +64,26 @@ public class CPacketToggleColytra implements IMessage {
                         serverPlayer.sendStatusMessage(new TextComponentTranslation("toggle.colytra.on"), true);
                         compound.setInteger("Active", 1);
                     }
+                } else if (!stack.isEmpty()) {
+                    NBTTagCompound compound  = stack.getTagCompound();
+                    int isActive = 1;
+
+                    if (compound == null) {
+                        compound = new NBTTagCompound();
+                    }
+
+                    if (compound.hasKey("Active")) {
+                        isActive = compound.getInteger("Active");
+                    }
+
+                    if (isActive == 1) {
+                        serverPlayer.sendStatusMessage(new TextComponentTranslation("toggle.colytra.off"), true);
+                        compound.setInteger("Active", 0);
+                    } else if (isActive == 0) {
+                        serverPlayer.sendStatusMessage(new TextComponentTranslation("toggle.colytra.on"), true);
+                        compound.setInteger("Active", 1);
+                    }
+                    stack.setTagCompound(compound);
                 }
             });
 
