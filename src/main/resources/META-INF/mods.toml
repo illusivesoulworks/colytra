@@ -1,0 +1,31 @@
+modLoader="javafml"
+loaderVersion="[25,)"
+issueTrackerURL="https://github.com/TheIllusiveC4/Colytra/issues"
+displayURL="${mod_url}"
+logoFile="${mod_icon}"
+authors="${mod_author}"
+[[mods]]
+modId="${mod_id}"
+version="${version}"
+displayName="${mod_name}"
+description='''
+${mod_description}
+'''
+[[dependencies.colytra]]
+    modId="forge"
+    mandatory=true
+    versionRange="[25,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.colytra]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.13,1.14)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.colytra]]
+    modId="caelus"
+    mandatory=true
+    versionRange="[0.3,)"
+    ordering="NONE"
+    side="BOTH"
