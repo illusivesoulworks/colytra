@@ -40,7 +40,7 @@ public class ASMHooks {
 
     public static void updateColytra(EntityLivingBase entityLivingBase) {
 
-        if (entityLivingBase.isElytraFlying()) {
+        if (entityLivingBase.isElytraFlying() || !(entityLivingBase instanceof EntityPlayer)) {
             return;
         }
 
@@ -56,8 +56,7 @@ public class ASMHooks {
 
                 if (!entityLivingBase.world.isRemote && (getTicksElytraFlying(entityLivingBase) + 1) % 20 == 0) {
 
-                    if (entityLivingBase instanceof EntityPlayer
-                            && !((EntityPlayer) entityLivingBase).capabilities.isCreativeMode) {
+                    if (!((EntityPlayer) entityLivingBase).capabilities.isCreativeMode) {
 
                         if (!(colytra.getItem() instanceof ItemElytra)) {
 
@@ -80,7 +79,7 @@ public class ASMHooks {
             flag = false;
         }
 
-        if (!entityLivingBase.world.isRemote && entityLivingBase instanceof EntityPlayer) {
+        if (!entityLivingBase.world.isRemote) {
             EntityPlayerMP playerMP = (EntityPlayerMP) entityLivingBase;
 
             if (flag) {

@@ -11,6 +11,7 @@ package c4.colytra.common.capabilities;
 import c4.colytra.Colytra;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -148,7 +149,7 @@ public class CapabilityColytraFlying {
 
         @SubscribeEvent
         public static void attachCapabilities(final AttachCapabilitiesEvent<Entity> evt) {
-            if (evt.getObject() instanceof EntityLivingBase) {
+            if (evt.getObject() instanceof EntityPlayer) {
                 evt.addCapability(ID, createProvider(new ColytraFlying()));
             }
         }
