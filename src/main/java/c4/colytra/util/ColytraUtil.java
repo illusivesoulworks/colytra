@@ -66,7 +66,7 @@ public class ColytraUtil {
                     if (energyStorage != null && energyStorage.getEnergyStored() > 0) {
                         return isActive;
                     } else {
-                        return itemstack.isItemStackDamageable() && itemstack.getItemDamage() < itemstack.getMaxDamage() - 1 && isActive;
+                        return !itemstack.isItemStackDamageable() || (itemstack.getItemDamage() < itemstack.getMaxDamage() - 1 && isActive);
                     }
                 }
                 default: return durability > 1 && isActive;
