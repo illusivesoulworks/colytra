@@ -116,7 +116,7 @@ public class CapabilityElytra {
                     return energyStorage.map(energy -> energy.canExtract() && energy.getEnergyStored() >
                             ColytraConfig.SERVER.energyUsage.get()).orElse(false);
                 } else {
-                    return this.stack.getDamage() < this.stack.getMaxDamage() - 1;
+                    return !this.stack.isDamageable() || (this.stack.getDamage() < this.stack.getMaxDamage() - 1);
                 }
             }
             return true;
