@@ -6,7 +6,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.registry.IRegistry;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextComponentTranslation;
@@ -14,6 +13,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.caelus.api.event.RenderCapeCheckEvent;
 import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
@@ -58,7 +58,7 @@ public class EventHandlerClient {
 
                             for (int j = 0; j < nbttaglist.size(); ++j) {
                                 NBTTagCompound nbttagcompound = nbttaglist.getCompound(j);
-                                Enchantment enchantment = IRegistry.ENCHANTMENT.get(ResourceLocation.tryCreate(nbttagcompound.getString("id")));
+                                Enchantment enchantment = ForgeRegistries.ENCHANTMENTS.getValue(ResourceLocation.tryCreate(nbttagcompound.getString("id")));
                                 if (enchantment != null) {
                                     tooltip.add(new TextComponentString(" ").appendSibling(enchantment.getDisplayName(nbttagcompound.getInt("lvl"))));
                                 }
