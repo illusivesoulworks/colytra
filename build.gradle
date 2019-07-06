@@ -59,7 +59,7 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${version_forge}"
-    deobf "top.theillusivec4.caelus:caelus:${version_caelus}"
+    compile fg.deobf("top.theillusivec4.caelus:caelus:${version_caelus}")
 }
 
 sourceSets {
