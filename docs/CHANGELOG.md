@@ -4,7 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project does not adhere to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 This project uses MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
-## [2.0-beta1](https://github.com/TheIllusiveC4/Colytra/compare/837f843e3288befada19de74121199a94141e642...master) - 2019.04.01
+## [2.0-beta2](https://github.com/TheIllusiveC4/Colytra/compare/e2c4ad7b31e00e7ac209218a8f48cb66d199b826...master) - 2019.07.09
+### Fixed
+- Fixed Colytra not working on unbreakable chestplates
+
+## [2.0-beta1](https://github.com/TheIllusiveC4/Colytra/compare/837f843e3288befada19de74121199a94141e642...e2c4ad7b31e00e7ac209218a8f48cb66d199b826) - 2019.04.01
 ### Added
 - Config option for colytra flight energy usage
 
