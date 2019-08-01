@@ -35,7 +35,8 @@ public class ClientUtil {
     public static boolean shouldRenderColytra(ItemStack stack) {
 
         if (stack.getItem() instanceof ItemElytraBauble) {
-            return !stack.hasTagCompound() || stack.getTagCompound().hasKey("Active") && stack.getTagCompound().getInteger("Active") == 1;
+            return !stack.hasTagCompound() || !stack.getTagCompound().hasKey(
+                    "Active") || stack.getTagCompound().getInteger("Active") == 1;
         }
         return !(stack.hasTagCompound() && stack.getTagCompound().hasKey("Elytra Upgrade") && stack.getSubCompound("Elytra Upgrade").getInteger("Active") == 0);
     }
