@@ -11,6 +11,14 @@ public class ColytraConfig {
 
   private static final String CONFIG_PREFIX = "gui." + Colytra.MODID + ".config.";
 
+  public static PermissionMode getPermissionMode() {
+    return SERVER.permissionMode.get();
+  }
+
+  public static List<String> getPermissionList() {
+    return SERVER.permissionList.get();
+  }
+
   public static int getEnergyUsage() {
     return SERVER.energyUsage.get();
   }

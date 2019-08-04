@@ -4,6 +4,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ElytraItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.INBT;
@@ -16,11 +17,13 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.colytra.Colytra;
 import top.theillusivec4.colytra.common.ColytraConfig;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.util.List;
 
 public class CapabilityElytra {
 
@@ -183,11 +186,37 @@ public class CapabilityElytra {
     public void attachCapabilities(final AttachCapabilitiesEvent<ItemStack> evt) {
 
       ItemStack stack = evt.getObject();
+      Item item = stack.getItem();
 
-      if (!(stack.getItem() instanceof ElytraItem) &&
-          MobEntity.getSlotForItemStack(stack) == EquipmentSlotType.CHEST) {
-        evt.addCapability(CapabilityElytra.ID, createProvider(stack));
+      if (item instanceof ElytraItem) {
+        return;
       }
+
+      if (MobEntity.getSlotForItemStack(stack) != EquipmentSlotType.CHEST) {
+        return;
+      }
+
+      if (!isValid(item)) {
+        return;
+      }
+
+      evt.addCapability(CapabilityElytra.ID, createProvider(stack));
+    }
+
+    private static boolean isValid(Item item) {
+
+      ColytraConfig.PermissionMode permissionMode = ColytraConfig.getPermissionMode();
+      List<String> permissionList = ColytraConfig.getPermissionList();
+      ResourceLocation resourceLocation = ForgeRegistries.ITEMS.getKey(item);
+
+      if (resourceLocation == null) {
+        return false;
+      }
+
+      String key = resourceLocation.toString();
+      boolean isBlacklist = permissionMode == ColytraConfig.PermissionMode.BLACKLIST;
+
+      return isBlacklist != permissionList.contains(key);
     }
   }
 }
