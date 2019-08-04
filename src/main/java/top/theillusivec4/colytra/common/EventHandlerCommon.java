@@ -1,17 +1,17 @@
 package top.theillusivec4.colytra.common;
 
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.enchantment.Enchantments;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.entity.item.ExperienceOrbEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.item.Items;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
@@ -20,7 +20,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import net.minecraftforge.fml.network.NetworkDirection;
+import net.minecraftforge.fml.network.PacketDistributor;
 import top.theillusivec4.caelus.api.CaelusAPI;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 import top.theillusivec4.colytra.common.network.NetworkHandler;
@@ -30,134 +30,206 @@ import java.util.UUID;
 
 public class EventHandlerCommon {
 
-    private static AttributeModifier FLIGHT_MODIFIER = new AttributeModifier(UUID.fromString("668bdbee-32b6-4c4b-bf6a-5a30f4d02e37"),
-            "Flight modifier", 1.0d, 0);
+  private static AttributeModifier FLIGHT_MODIFIER =
+      new AttributeModifier(UUID.fromString("668bdbee-32b6-4c4b-bf6a-5a30f4d02e37"),
+                            "Flight modifier", 1.0d, AttributeModifier.Operation.ADDITION);
 
-    @SubscribeEvent
-    public void onLivingEquipmentChange(LivingEquipmentChangeEvent evt) {
+  @SubscribeEvent
+  public void onLivingEquipmentChange(LivingEquipmentChangeEvent evt) {
 
-        if (evt.getEntityLiving() instanceof EntityPlayer && evt.getSlot() == EntityEquipmentSlot.CHEST) {
-            ItemStack to = evt.getTo();
-            IAttributeInstance attributeInstance = evt.getEntityLiving().getAttribute(CaelusAPI.ELYTRA_FLIGHT);
-            attributeInstance.removeModifier(FLIGHT_MODIFIER);
-            CapabilityElytra.getCapability(to).ifPresent(ielytra -> {
-
-                if (ielytra.isUseable()) {
-                    attributeInstance.applyModifier(FLIGHT_MODIFIER);
-                }
-            });
-        }
+    if (!(evt.getEntityLiving() instanceof PlayerEntity)) {
+      return;
     }
 
-    @SubscribeEvent
-    public void onPlayerTick(TickEvent.PlayerTickEvent evt) {
-
-        if (evt.side == LogicalSide.SERVER && evt.phase == TickEvent.Phase.END) {
-            EntityPlayer player = evt.player;
-            ItemStack stack = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST);
-            CapabilityElytra.getCapability(stack).ifPresent(ielytra -> {
-                ColytraConfig.ColytraMode mode = ColytraConfig.SERVER.colytraMode.get();
-
-                if (mode != ColytraConfig.ColytraMode.PERFECT) {
-                    int ticksFlying = ObfuscationReflectionHelper.getPrivateValue(EntityLivingBase.class, player, "field_184629_bo");
-
-                    if ((ticksFlying + 1) % 20 == 0) {
-                        ielytra.damageElytra(player, 1);
-
-                        if (player instanceof EntityPlayerMP) {
-                            NetworkHandler.INSTANCE.sendTo(new SPacketSyncColytra(player.getEntityId(), ielytra.getElytra()),
-                                    ((EntityPlayerMP) player).connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
-                        }
-                    }
-                }
-            });
-        }
+    if (evt.getSlot() != EquipmentSlotType.CHEST) {
+      return;
     }
 
-    @SubscribeEvent
-    public void onPlayerXPPickUp(PlayerPickupXpEvent evt) {
-        EntityPlayer player = evt.getEntityPlayer();
+    PlayerEntity playerEntity = (PlayerEntity) evt.getEntity();
+    ItemStack to = evt.getTo();
+    IAttributeInstance attributeInstance = playerEntity.getAttribute(CaelusAPI.ELYTRA_FLIGHT);
+    attributeInstance.removeModifier(FLIGHT_MODIFIER);
 
-        if (!player.world.isRemote && ColytraConfig.SERVER.colytraMode.get() == ColytraConfig.ColytraMode.NORMAL) {
-            CapabilityElytra.getCapability(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST)).ifPresent(ielytra -> {
-                ItemStack elytraStack = ielytra.getElytra();
+    CapabilityElytra.getCapability(to).ifPresent(elytraHolder -> {
 
-                if (!elytraStack.isEmpty() && elytraStack.getDamage() > 0 && EnchantmentHelper.getEnchantmentLevel(Enchantments.
-                        MENDING, elytraStack) > 0) {
-                    evt.setCanceled(true);
-                    EntityXPOrb xpOrb = evt.getOrb();
+      if (elytraHolder.isUseable()) {
+        attributeInstance.applyModifier(FLIGHT_MODIFIER);
+      }
+    });
+  }
 
-                    if (xpOrb.delayBeforeCanPickup == 0 && player.xpCooldown == 0) {
-                        player.xpCooldown = 2;
-                        player.onItemPickup(xpOrb, 1);
-                        int i = Math.min(xpToDurability(xpOrb.xpValue), elytraStack.getDamage());
-                        xpOrb.xpValue -= durabilityToXp(i);
-                        elytraStack.setDamage(elytraStack.getDamage() - i);
+  @SubscribeEvent
+  public void onPlayerTick(TickEvent.PlayerTickEvent evt) {
 
-                        if (player instanceof EntityPlayerMP) {
-                            NetworkHandler.INSTANCE.sendTo(new SPacketSyncColytra(player.getEntityId(), ielytra.getElytra()),
-                                    ((EntityPlayerMP) player).connection.getNetworkManager(), NetworkDirection.PLAY_TO_CLIENT);
-                        }
-
-                        if (xpOrb.xpValue > 0) {
-                            player.giveExperiencePoints(xpOrb.xpValue);
-                        }
-                        xpOrb.remove();
-                    }
-                }
-            });
-        }
+    if (evt.side != LogicalSide.SERVER) {
+      return;
     }
 
-    private static int durabilityToXp(int durability) {
-        return durability / 2;
+    if (evt.phase != TickEvent.Phase.END) {
+      return;
     }
 
-    private static int xpToDurability(int xp) {
-        return xp * 2;
+    PlayerEntity player = evt.player;
+    ItemStack stack = player.getItemStackFromSlot(EquipmentSlotType.CHEST);
+
+    CapabilityElytra.getCapability(stack).ifPresent(elytraHolder -> {
+
+      if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.PERFECT) {
+        updateColytra(elytraHolder, player);
+      }
+    });
+  }
+
+  private static void updateColytra(CapabilityElytra.IElytra elytraHolder, PlayerEntity player) {
+
+    Integer ticksFlying =
+        ObfuscationReflectionHelper.getPrivateValue(LivingEntity.class, player, "field_184629_bo");
+
+    if (ticksFlying == null) {
+      return;
     }
 
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public void onColytraAnvil(AnvilUpdateEvent evt) {
-
-        if (ColytraConfig.SERVER.colytraMode.get() != ColytraConfig.ColytraMode.NORMAL) {
-            return;
-        }
-        ItemStack chest = evt.getLeft();
-        CapabilityElytra.getCapability(chest).ifPresent(ielytra -> {
-            ItemStack membrane = evt.getRight();
-
-            if (membrane.getItem() == Items.PHANTOM_MEMBRANE) {
-                ItemStack stack = ielytra.getElytra();
-                int toRepair = stack.getDamage();
-
-                if (toRepair == 0) {
-                    return;
-                }
-                int membraneToUse = 0;
-
-                while (toRepair > 0) {
-                    toRepair -= 108;
-                    membraneToUse++;
-                }
-                membraneToUse = Math.min(membraneToUse, membrane.getCount());
-                int newDamage = Math.max(stack.getDamage() - membraneToUse * 108, 0);
-                ItemStack output = chest.copy();
-                ItemStack outputElytra = stack.copy();
-                outputElytra.setDamage(newDamage);
-                outputElytra.setRepairCost(stack.getRepairCost() * 2 + 1);
-                CapabilityElytra.getCapability(output).ifPresent(ielytra1 -> ielytra1.setElytra(outputElytra));
-                int xpCost = membraneToUse + chest.getRepairCost() + membrane.getRepairCost();
-                String name = evt.getName();
-
-                if (!name.isEmpty() && !name.equals(chest.getDisplayName().getString())) {
-                    output.setDisplayName(new TextComponentString(name));
-                    xpCost++;
-                }
-                evt.setMaterialCost(membraneToUse);
-                evt.setCost(xpCost);
-                evt.setOutput(output);
-            }
-        });
+    if ((ticksFlying + 1) % 20 != 0) {
+      return;
     }
+
+    elytraHolder.damageElytra(player, 1);
+
+    if (player instanceof ServerPlayerEntity) {
+      sendColytraSyncPacket(elytraHolder, player);
+    }
+  }
+
+  @SubscribeEvent
+  public void onPlayerXPPickUp(PlayerPickupXpEvent evt) {
+
+    if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
+      return;
+    }
+
+    if (evt.getEntityPlayer().world.isRemote) {
+      return;
+    }
+
+    PlayerEntity player = evt.getEntityPlayer();
+    ItemStack stack = player.getItemStackFromSlot(EquipmentSlotType.CHEST);
+
+    CapabilityElytra.getCapability(stack)
+                    .ifPresent(elytraHolder -> handleColytraMending(elytraHolder, evt, player));
+  }
+
+  private static void handleColytraMending(CapabilityElytra.IElytra elytraHolder,
+                                           PlayerPickupXpEvent evt, PlayerEntity player) {
+
+    ItemStack elytraStack = elytraHolder.getElytra();
+
+    if (elytraStack.isEmpty()) {
+      return;
+    }
+
+    if (elytraStack.getDamage() <= 0) {
+      return;
+    }
+
+    if (EnchantmentHelper.getEnchantmentLevel(Enchantments.MENDING, elytraStack) <= 0) {
+      return;
+    }
+
+    evt.setCanceled(true);
+    ExperienceOrbEntity xpOrb = evt.getOrb();
+
+    if (xpOrb.delayBeforeCanPickup == 0 && player.xpCooldown == 0) {
+      player.xpCooldown = 2;
+      player.onItemPickup(xpOrb, 1);
+      int i = Math.min(xpToDurability(xpOrb.xpValue), elytraStack.getDamage());
+      xpOrb.xpValue -= durabilityToXp(i);
+      elytraStack.setDamage(elytraStack.getDamage() - i);
+
+      if (player instanceof ServerPlayerEntity) {
+        sendColytraSyncPacket(elytraHolder, player);
+      }
+
+      if (xpOrb.xpValue > 0) {
+        player.giveExperiencePoints(xpOrb.xpValue);
+      }
+
+      xpOrb.remove();
+    }
+  }
+
+  private static int durabilityToXp(int durability) {
+
+    return durability / 2;
+  }
+
+  private static int xpToDurability(int xp) {
+
+    return xp * 2;
+  }
+
+  @SubscribeEvent(priority = EventPriority.HIGH)
+  public void onColytraAnvil(AnvilUpdateEvent evt) {
+
+    if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
+      return;
+    }
+
+    ItemStack left = evt.getLeft();
+    CapabilityElytra.getCapability(left)
+                    .ifPresent(elytraHolder -> handleColytraRepair(elytraHolder, evt));
+  }
+
+  private static void handleColytraRepair(CapabilityElytra.IElytra elytraHolder,
+                                          AnvilUpdateEvent evt) {
+
+    ItemStack right = evt.getRight();
+    ItemStack left = evt.getLeft();
+    ItemStack stack = elytraHolder.getElytra();
+    int toRepair = stack.getDamage();
+
+    if (right.getItem() != Items.PHANTOM_MEMBRANE) {
+      return;
+    }
+
+    if (toRepair == 0) {
+      return;
+    }
+
+    int membraneToUse = 0;
+
+    while (toRepair > 0) {
+      toRepair -= 108;
+      membraneToUse++;
+    }
+    membraneToUse = Math.min(membraneToUse, right.getCount());
+    int newDamage = Math.max(stack.getDamage() - membraneToUse * 108, 0);
+
+    ItemStack output = left.copy();
+    ItemStack outputElytra = stack.copy();
+    outputElytra.setDamage(newDamage);
+    outputElytra.setRepairCost(stack.getRepairCost() * 2 + 1);
+
+    CapabilityElytra.getCapability(output)
+                    .ifPresent(outputElytraHolder -> outputElytraHolder.setElytra(outputElytra));
+
+    int xpCost = membraneToUse + left.getRepairCost() + right.getRepairCost();
+    String name = evt.getName();
+
+    if (!name.isEmpty() && !name.equals(left.getDisplayName().getString())) {
+      output.setDisplayName(new StringTextComponent(name));
+      xpCost++;
+    }
+
+    evt.setMaterialCost(membraneToUse);
+    evt.setCost(xpCost);
+    evt.setOutput(output);
+  }
+
+  private static void sendColytraSyncPacket(CapabilityElytra.IElytra elytraHolder,
+                                            PlayerEntity player) {
+
+    NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
+                                 new SPacketSyncColytra(player.getEntityId(),
+                                                        elytraHolder.getElytra()));
+  }
 }

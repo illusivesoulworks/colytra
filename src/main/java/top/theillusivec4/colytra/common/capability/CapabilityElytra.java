@@ -1,13 +1,13 @@
 package top.theillusivec4.colytra.common.capability;
 
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.ItemElytra;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.MobEntity;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ElytraItem;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.INBTBase;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumFacing;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.INBT;
+import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.*;
@@ -16,7 +16,6 @@ import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import top.theillusivec4.colytra.Colytra;
 import top.theillusivec4.colytra.common.ColytraConfig;
 
@@ -25,143 +24,170 @@ import javax.annotation.Nullable;
 
 public class CapabilityElytra {
 
-    @CapabilityInject(IElytra.class)
-    public static final Capability<IElytra> ELYTRA_CAPABILITY = null;
+  @CapabilityInject(IElytra.class)
+  public static final Capability<IElytra> ELYTRA_CAPABILITY = null;
 
-    public static final ResourceLocation ID = new ResourceLocation(Colytra.MODID, "elytra_attachment");
+  public static final ResourceLocation ID =
+      new ResourceLocation(Colytra.MODID, "elytra_attachment");
 
-    public static void register() {
-        MinecraftForge.EVENT_BUS.register(new CapabilityEvents());
-        CapabilityManager.INSTANCE.register(IElytra.class, new Capability.IStorage<IElytra>() {
+  public static void register() {
 
-            @Override
-            public INBTBase writeNBT(Capability<IElytra> capability, IElytra instance, EnumFacing side) {
-                return instance.getElytra().write(new NBTTagCompound());
-            }
+    MinecraftForge.EVENT_BUS.register(new CapabilityEvents());
+    CapabilityManager.INSTANCE.register(IElytra.class, new Capability.IStorage<IElytra>() {
 
-            @Override
-            public void readNBT(Capability<IElytra> capability, IElytra instance, EnumFacing side, INBTBase nbt) {
-                instance.setElytra(ItemStack.read((NBTTagCompound)nbt));
-            }
-        }, ElytraWrapper::new);
+      @Override
+      public INBT writeNBT(Capability<IElytra> capability, IElytra instance, Direction side) {
+
+        return instance.getElytra().write(new CompoundNBT());
+      }
+
+      @Override
+      public void readNBT(Capability<IElytra> capability, IElytra instance, Direction side,
+                          INBT nbt) {
+
+        instance.setElytra(ItemStack.read((CompoundNBT) nbt));
+      }
+    }, ElytraWrapper::new);
+  }
+
+  public static LazyOptional<IElytra> getCapability(ItemStack stack) {
+
+    return stack.getCapability(ELYTRA_CAPABILITY);
+  }
+
+  public static ICapabilityProvider createProvider(final ItemStack stack) {
+
+    return new Provider(stack);
+  }
+
+  public interface IElytra {
+
+    ItemStack getElytra();
+
+    void setElytra(ItemStack stack);
+
+    void damageElytra(LivingEntity livingEntity, int amount);
+
+    boolean isUseable();
+  }
+
+  public static class ElytraWrapper implements IElytra {
+
+    ItemStack elytra = ItemStack.EMPTY;
+    ItemStack stack  = ItemStack.EMPTY;
+
+    ElytraWrapper() {
+
     }
 
-    public static LazyOptional<IElytra> getCapability(ItemStack stack) {
-        return stack.getCapability(ELYTRA_CAPABILITY);
+    ElytraWrapper(ItemStack stack) {
+
+      this.stack = stack;
     }
 
-    public static ICapabilityProvider createProvider(final ItemStack stack) {
-        return new Provider(stack);
+    @Override
+    public ItemStack getElytra() {
+
+      return elytra;
     }
 
-    public interface IElytra {
+    @Override
+    public void setElytra(ItemStack stack) {
 
-        ItemStack getElytra();
-
-        void setElytra(ItemStack stack);
-
-        void damageElytra(EntityLivingBase entityLivingBase, int amount);
-
-        boolean isUseable();
+      this.elytra = stack.copy();
     }
 
-    public static class ElytraWrapper implements IElytra {
+    @Override
+    public void damageElytra(LivingEntity livingEntity, int amount) {
 
-        ItemStack elytra = ItemStack.EMPTY;
-        ItemStack stack = ItemStack.EMPTY;
+      ColytraConfig.ColytraMode colytraMode = ColytraConfig.getColytraMode();
 
-        ElytraWrapper() {}
+      if (colytraMode == ColytraConfig.ColytraMode.NORMAL) {
+        this.elytra.damageItem(amount, livingEntity, damager -> {
+          damager.sendBreakAnimation(EquipmentSlotType.CHEST);
+        });
+      } else if (colytraMode == ColytraConfig.ColytraMode.UNISON) {
+        LazyOptional<IEnergyStorage> energyStorage = elytra.getCapability(CapabilityEnergy.ENERGY);
 
-        ElytraWrapper(ItemStack stack) {
-            this.stack = stack;
+        if (energyStorage.isPresent()) {
+          energyStorage.ifPresent(
+              energy -> energy.extractEnergy(ColytraConfig.getEnergyUsage(), false));
+        } else {
+          this.stack.damageItem(amount, livingEntity, damager -> {
+            damager.sendBreakAnimation(EquipmentSlotType.CHEST);
+          });
         }
-
-        @Override
-        public ItemStack getElytra() {
-            return elytra;
-        }
-
-        @Override
-        public void setElytra(ItemStack stack) {
-            this.elytra = stack.copy();
-        }
-
-        @Override
-        public void damageElytra(EntityLivingBase entityLivingBase, int amount) {
-            ColytraConfig.ColytraMode colytraMode = ColytraConfig.SERVER.colytraMode.get();
-
-            if (colytraMode == ColytraConfig.ColytraMode.NORMAL) {
-                this.elytra.damageItem(amount, entityLivingBase);
-            } else if (colytraMode == ColytraConfig.ColytraMode.UNISON) {
-                LazyOptional<IEnergyStorage> energyStorage = elytra.getCapability(CapabilityEnergy.ENERGY);
-
-                if (energyStorage.isPresent()) {
-                    energyStorage.ifPresent(energy -> energy.extractEnergy(ColytraConfig.SERVER.energyUsage.get(), false));
-                } else {
-                    this.stack.damageItem(amount, entityLivingBase);
-                }
-            }
-        }
-
-        @Override
-        public boolean isUseable() {
-            ColytraConfig.ColytraMode colytraMode = ColytraConfig.SERVER.colytraMode.get();
-
-            if (colytraMode == ColytraConfig.ColytraMode.NORMAL) {
-                return elytra.getItem() instanceof ItemElytra && ItemElytra.isUsable(elytra);
-            } else if (colytraMode == ColytraConfig.ColytraMode.UNISON) {
-                LazyOptional<IEnergyStorage> energyStorage = elytra.getCapability(CapabilityEnergy.ENERGY);
-
-                if (energyStorage.isPresent()) {
-                    return energyStorage.map(energy -> energy.canExtract() && energy.getEnergyStored() >
-                            ColytraConfig.SERVER.energyUsage.get()).orElse(false);
-                } else {
-                    return !this.stack.isDamageable() || (this.stack.getDamage() < this.stack.getMaxDamage() - 1);
-                }
-            }
-            return true;
-        }
+      }
     }
 
-    public static class Provider implements ICapabilitySerializable<INBTBase> {
+    @Override
+    public boolean isUseable() {
 
-        final LazyOptional<IElytra> optional;
-        final IElytra elytra;
+      ColytraConfig.ColytraMode colytraMode = ColytraConfig.getColytraMode();
 
-        Provider(ItemStack stack) {
-            this.elytra = new ElytraWrapper(stack);
-            this.optional = LazyOptional.of(() -> elytra);
+      if (colytraMode == ColytraConfig.ColytraMode.NORMAL) {
+        return elytra.getItem() instanceof ElytraItem && ElytraItem.isUsable(elytra);
+      } else if (colytraMode == ColytraConfig.ColytraMode.UNISON) {
+        LazyOptional<IEnergyStorage> energyStorage = elytra.getCapability(CapabilityEnergy.ENERGY);
+
+        if (energyStorage.isPresent()) {
+          return energyStorage.map(energy -> energy.canExtract() && energy.getEnergyStored() >
+                                                                    ColytraConfig.getEnergyUsage())
+                              .orElse(false);
+        } else {
+          return !this.stack.isDamageable() ||
+                 (this.stack.getDamage() < this.stack.getMaxDamage() - 1);
         }
+      }
+      return true;
+    }
+  }
 
-        @SuppressWarnings("ConstantConditions")
-        @Nonnull
-        @Override
-        public <T> LazyOptional<T> getCapability(@Nullable Capability<T> capability, EnumFacing facing) {
-            return ELYTRA_CAPABILITY.orEmpty(capability, optional);
-        }
+  public static class Provider implements ICapabilitySerializable<INBT> {
 
-        @SuppressWarnings("ConstantConditions")
-        @Override
-        public INBTBase serializeNBT() {
-            return ELYTRA_CAPABILITY.writeNBT(elytra, null);
-        }
+    final LazyOptional<IElytra> optional;
+    final IElytra               elytra;
 
-        @SuppressWarnings("ConstantConditions")
-        @Override
-        public void deserializeNBT(INBTBase nbt) {
-            ELYTRA_CAPABILITY.readNBT(elytra, null, nbt);
-        }
+    Provider(ItemStack stack) {
+
+      this.elytra = new ElytraWrapper(stack);
+      this.optional = LazyOptional.of(() -> elytra);
     }
 
-    public static class CapabilityEvents {
+    @SuppressWarnings("ConstantConditions")
+    @Nonnull
+    @Override
+    public <T> LazyOptional<T> getCapability(@Nullable Capability<T> capability, Direction side) {
 
-        @SubscribeEvent
-        public void attachCapabilities(final AttachCapabilitiesEvent<ItemStack> evt) {
-            ItemStack stack = evt.getObject();
-
-            if (!(stack.getItem() instanceof ItemElytra) && EntityLiving.getSlotForItemStack(stack) == EntityEquipmentSlot.CHEST) {
-                evt.addCapability(CapabilityElytra.ID, createProvider(stack));
-            }
-        }
+      return ELYTRA_CAPABILITY.orEmpty(capability, optional);
     }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public INBT serializeNBT() {
+
+      return ELYTRA_CAPABILITY.writeNBT(elytra, null);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Override
+    public void deserializeNBT(INBT nbt) {
+
+      ELYTRA_CAPABILITY.readNBT(elytra, null, nbt);
+    }
+  }
+
+  public static class CapabilityEvents {
+
+    @SubscribeEvent
+    public void attachCapabilities(final AttachCapabilitiesEvent<ItemStack> evt) {
+
+      ItemStack stack = evt.getObject();
+
+      if (!(stack.getItem() instanceof ElytraItem) &&
+          MobEntity.getSlotForItemStack(stack) == EquipmentSlotType.CHEST) {
+        evt.addCapability(CapabilityElytra.ID, createProvider(stack));
+      }
+    }
+  }
 }
