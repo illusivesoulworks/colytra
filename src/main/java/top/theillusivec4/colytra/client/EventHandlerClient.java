@@ -46,7 +46,7 @@ public class EventHandlerClient {
     List<ITextComponent> tooltip = evt.getToolTip();
 
     CapabilityElytra.getCapability(itemstack).ifPresent(elytraHolder -> {
-
+      getColytraToolip(elytraHolder, tooltip);
     });
   }
 
