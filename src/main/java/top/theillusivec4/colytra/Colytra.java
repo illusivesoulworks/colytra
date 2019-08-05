@@ -54,8 +54,8 @@ public class Colytra {
     public static void onRecipeSerializerRegistry(
         final RegistryEvent.Register<IRecipeSerializer<?>> evt) {
 
-      ElytraAttachmentRecipe.CRAFTING_ATTACH_ELYTRA.setRegistryName("elytra_attachment");
-      ElytraDetachmentRecipe.CRAFTING_DETACH_ELYTRA.setRegistryName("elytra_detachment");
+      ElytraAttachmentRecipe.CRAFTING_ATTACH_ELYTRA.setRegistryName(ATTACH_ELYTRA);
+      ElytraDetachmentRecipe.CRAFTING_DETACH_ELYTRA.setRegistryName(DETACH_ELYTRA);
       evt.getRegistry()
          .registerAll(ElytraAttachmentRecipe.CRAFTING_ATTACH_ELYTRA,
                       ElytraDetachmentRecipe.CRAFTING_DETACH_ELYTRA);
