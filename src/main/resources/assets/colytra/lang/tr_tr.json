@@ -1,0 +1,11 @@
+{
+  "tooltip.colytra.broken": "Kullanımdışı",
+  "gui.colytra.config.permissionMode": "İzin Modu",
+  "gui.colytra.config.permissionMode.tooltip": "İzin listesinin beyaz liste mi siyah liste mi olduğunu ayarlar",
+  "gui.colytra.config.permissionList": "İzin Listesi",
+  "gui.colytra.config.permissionList.tooltip": "İzin Moduna bağlı olarak kara listeye / beyaz listeye alınacak kayıt isimine göre öğeler listesi",
+  "gui.colytra.config.colytraMode": "Colytra Modu",
+  "gui.colytra.config.colytraMode.tooltip": "Elytra zırhlarının nasıl davranacağını ayarlar\nNORMAL: Elytralar zırhlardan ayrı olarak var olur, daha sonrasında ayrılabilir\nUYUM: Elytralar zırhla tamamen kaynaşır, daha sonrasında ayrılamaz\nMÜKEMMEL: Elytralar zırhla tamamen kaynaşır ve uçuş dayanıklılığı kullanmaz",
+  "gui.colytra.config.energyUsage": "Enerji Kullanımı",
+  "gui.colytra.config.energyUsage.tooltip": "Uyum modu aktifse elitra uçuşunun saniyede kaç enerji harcadığı ve zırhın kullandığı enerji"
+}
