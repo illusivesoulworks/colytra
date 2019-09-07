@@ -1,0 +1,11 @@
+{
+  "tooltip.colytra.broken": "已损坏",
+  "gui.colytra.config.permissionMode": "许可模式",
+  "gui.colytra.config.permissionMode.tooltip": "设置物品列表是使用黑名单还是白名单",
+  "gui.colytra.config.permissionList": "许可列表",
+  "gui.colytra.config.permissionList.tooltip": "按注册名称列出的物品列表将根据许可模式列入黑名单/白名单",
+  "gui.colytra.config.colytraMode": "鞘翅模式",
+  "gui.colytra.config.colytraMode.tooltip": "设置鞘翅胸甲的模式\nNORMAL: 鞘翅将与胸甲分开存在，可以以后分开\nUNISON: 鞘翅将与胸甲完全融合，无法分开\nPERFECT: 鞘翅将与胸甲完全融合，但是飞行不会使用耐久度",
+  "gui.colytra.config.energyUsage": "能量使用",
+  "gui.colytra.config.energyUsage.tooltip": "如果启用了Unison模式并且胸甲使用能量，鞘翅飞行一秒消耗多少能量"
+}
