@@ -1,5 +1,8 @@
 package top.theillusivec4.colytra.common.capability;
 
+import java.util.List;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -11,7 +14,11 @@ import net.minecraft.nbt.INBT;
 import net.minecraft.util.Direction;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.*;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.CapabilityInject;
+import net.minecraftforge.common.capabilities.CapabilityManager;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.capabilities.ICapabilitySerializable;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
@@ -21,17 +28,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.colytra.Colytra;
 import top.theillusivec4.colytra.common.ColytraConfig;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import java.util.List;
-
 public class CapabilityElytra {
 
   @CapabilityInject(IElytra.class)
   public static final Capability<IElytra> ELYTRA_CAPABILITY = null;
 
-  public static final ResourceLocation ID =
-      new ResourceLocation(Colytra.MODID, "elytra_attachment");
+  public static final ResourceLocation ID = new ResourceLocation(Colytra.MODID,
+      "elytra_attachment");
 
   public static void register() {
 
@@ -46,7 +49,7 @@ public class CapabilityElytra {
 
       @Override
       public void readNBT(Capability<IElytra> capability, IElytra instance, Direction side,
-                          INBT nbt) {
+          INBT nbt) {
 
         instance.setElytra(ItemStack.read((CompoundNBT) nbt));
       }
@@ -77,7 +80,7 @@ public class CapabilityElytra {
   public static class ElytraWrapper implements IElytra {
 
     ItemStack elytra = ItemStack.EMPTY;
-    ItemStack stack  = ItemStack.EMPTY;
+    ItemStack stack = ItemStack.EMPTY;
 
     ElytraWrapper() {
 
@@ -139,11 +142,10 @@ public class CapabilityElytra {
 
         if (energyStorage.isPresent()) {
           return energyStorage.map(energy -> energy.canExtract() && energy.getEnergyStored() >
-                                                                    ColytraConfig.getEnergyUsage())
-                              .orElse(false);
+              ColytraConfig.getEnergyUsage()).orElse(false);
         } else {
-          return !this.stack.isDamageable() ||
-                 (this.stack.getDamage() < this.stack.getMaxDamage() - 1);
+          return !this.stack.isDamageable() || (this.stack.getDamage()
+              < this.stack.getMaxDamage() - 1);
         }
       }
       return true;
@@ -153,7 +155,7 @@ public class CapabilityElytra {
   public static class Provider implements ICapabilitySerializable<INBT> {
 
     final LazyOptional<IElytra> optional;
-    final IElytra               elytra;
+    final IElytra elytra;
 
     Provider(ItemStack stack) {
 
@@ -186,27 +188,6 @@ public class CapabilityElytra {
 
   public static class CapabilityEvents {
 
-    @SubscribeEvent
-    public void attachCapabilities(final AttachCapabilitiesEvent<ItemStack> evt) {
-
-      ItemStack stack = evt.getObject();
-      Item item = stack.getItem();
-
-      if (item instanceof ElytraItem) {
-        return;
-      }
-
-      if (MobEntity.getSlotForItemStack(stack) != EquipmentSlotType.CHEST) {
-        return;
-      }
-
-      if (!isValid(item)) {
-        return;
-      }
-
-      evt.addCapability(CapabilityElytra.ID, createProvider(stack));
-    }
-
     private static boolean isValid(Item item) {
 
       ColytraConfig.PermissionMode permissionMode = ColytraConfig.getPermissionMode();
@@ -221,6 +202,20 @@ public class CapabilityElytra {
       boolean isBlacklist = permissionMode == ColytraConfig.PermissionMode.BLACKLIST;
 
       return isBlacklist != permissionList.contains(key);
+    }
+
+    @SubscribeEvent
+    public void attachCapabilities(final AttachCapabilitiesEvent<ItemStack> evt) {
+
+      ItemStack stack = evt.getObject();
+      Item item = stack.getItem();
+      boolean isChestplate = MobEntity.getSlotForItemStack(stack) == EquipmentSlotType.CHEST;
+
+      if (item instanceof ElytraItem || !isChestplate || !isValid(item)) {
+        return;
+      }
+
+      evt.addCapability(CapabilityElytra.ID, createProvider(stack));
     }
   }
 }

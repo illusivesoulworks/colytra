@@ -1,5 +1,6 @@
 package top.theillusivec4.colytra.client;
 
+import java.util.List;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
@@ -17,41 +18,10 @@ import top.theillusivec4.caelus.api.event.RenderElytraEvent;
 import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 
-import java.util.List;
-
 public class EventHandlerClient {
 
-  @SubscribeEvent
-  public void onRenderElytra(RenderElytraEvent evt) {
-
-    ItemStack stack = evt.getEntityLiving().getItemStackFromSlot(EquipmentSlotType.CHEST);
-
-    CapabilityElytra.getCapability(stack).ifPresent(ielytra -> {
-      ItemStack elytraStack = ielytra.getElytra();
-
-      if (!elytraStack.isEmpty()) {
-        evt.setRenderElytra(true);
-      }
-
-      if (elytraStack.isEnchanted()) {
-        evt.setRenderEnchantmentGlow(true);
-      }
-    });
-  }
-
-  @SubscribeEvent
-  public void onItemTooltip(ItemTooltipEvent evt) {
-
-    ItemStack itemstack = evt.getItemStack();
-    List<ITextComponent> tooltip = evt.getToolTip();
-
-    CapabilityElytra.getCapability(itemstack).ifPresent(elytraHolder -> {
-      getColytraToolip(elytraHolder, tooltip);
-    });
-  }
-
   private static void getColytraToolip(CapabilityElytra.IElytra elytraHolder,
-                                       List<ITextComponent> tooltip) {
+      List<ITextComponent> tooltip) {
 
     ItemStack elytraStack = elytraHolder.getElytra();
 
@@ -92,13 +62,42 @@ public class EventHandlerClient {
       if (elytraHolder.isUseable()) {
         tooltip.add(new StringTextComponent(" ").appendSibling(
             new TranslationTextComponent("item.durability",
-                                         elytraStack.getMaxDamage() - elytraStack.getDamage(),
-                                         elytraStack.getMaxDamage())));
+                elytraStack.getMaxDamage() - elytraStack.getDamage(),
+                elytraStack.getMaxDamage())));
       } else {
         tooltip.add(new StringTextComponent(" ").appendSibling(
             new TranslationTextComponent("tooltip.colytra.broken").applyTextStyle(
                 TextFormatting.RED)));
       }
     }
+  }
+
+  @SubscribeEvent
+  public void onRenderElytra(RenderElytraEvent evt) {
+
+    ItemStack stack = evt.getEntityLiving().getItemStackFromSlot(EquipmentSlotType.CHEST);
+
+    CapabilityElytra.getCapability(stack).ifPresent(ielytra -> {
+      ItemStack elytraStack = ielytra.getElytra();
+
+      if (!elytraStack.isEmpty()) {
+        evt.setRenderElytra(true);
+      }
+
+      if (elytraStack.isEnchanted()) {
+        evt.setRenderEnchantmentGlow(true);
+      }
+    });
+  }
+
+  @SubscribeEvent
+  public void onItemTooltip(ItemTooltipEvent evt) {
+
+    ItemStack itemstack = evt.getItemStack();
+    List<ITextComponent> tooltip = evt.getToolTip();
+
+    CapabilityElytra.getCapability(itemstack).ifPresent(elytraHolder -> {
+      getColytraToolip(elytraHolder, tooltip);
+    });
   }
 }

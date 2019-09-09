@@ -1,5 +1,6 @@
 package top.theillusivec4.colytra.common.crafting;
 
+import javax.annotation.Nonnull;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -11,8 +12,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
-
-import javax.annotation.Nonnull;
 
 public class ElytraDetachmentRecipe extends SpecialRecipe {
 

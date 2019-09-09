@@ -1,5 +1,8 @@
 package top.theillusivec4.colytra.common.crafting;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.Nonnull;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.inventory.CraftingInventory;
@@ -14,10 +17,6 @@ import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 
-import javax.annotation.Nonnull;
-import java.util.HashMap;
-import java.util.Map;
-
 public class ElytraAttachmentRecipe extends SpecialRecipe {
 
   public static final SpecialRecipeSerializer<ElytraAttachmentRecipe> CRAFTING_ATTACH_ELYTRA =
@@ -26,6 +25,42 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
   public ElytraAttachmentRecipe(ResourceLocation id) {
 
     super(id);
+  }
+
+  private static void mergeEnchantments(ItemStack source, ItemStack destination) {
+
+    Map<Enchantment, Integer> mapSource = EnchantmentHelper.getEnchantments(source);
+    Map<Enchantment, Integer> mapDestination = EnchantmentHelper.getEnchantments(destination);
+
+    for (Enchantment srcEnch : mapSource.keySet()) {
+
+      if (srcEnch == null) {
+        continue;
+      }
+
+      if (!srcEnch.canApply(destination)) {
+        return;
+      }
+
+      int destLevel = mapDestination.getOrDefault(srcEnch, 0);
+      int srcLevel = mapSource.get(srcEnch);
+      srcLevel = destLevel == srcLevel ? srcLevel + 1 : Math.max(srcLevel, destLevel);
+
+      for (Enchantment destEnch : mapDestination.keySet()) {
+
+        if (srcEnch != destEnch && !destEnch.isCompatibleWith(srcEnch)) {
+          return;
+        }
+      }
+
+      if (srcLevel > srcEnch.getMaxLevel()) {
+        srcLevel = srcEnch.getMaxLevel();
+      }
+      mapDestination.put(srcEnch, srcLevel);
+    }
+
+    EnchantmentHelper.setEnchantments(mapDestination, destination);
+    EnchantmentHelper.setEnchantments(new HashMap<>(), source);
   }
 
   @Override
@@ -100,7 +135,7 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
         itemstack.setRepairCost(elytraStack.getRepairCost() + itemstack.getRepairCost());
       }
       CapabilityElytra.getCapability(itemstack)
-                      .ifPresent(elytraHolder -> elytraHolder.setElytra(elytraStack));
+          .ifPresent(elytraHolder -> elytraHolder.setElytra(elytraStack));
       return itemstack;
     } else {
       return ItemStack.EMPTY;
@@ -118,41 +153,5 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
   public IRecipeSerializer<?> getSerializer() {
 
     return CRAFTING_ATTACH_ELYTRA;
-  }
-
-  private static void mergeEnchantments(ItemStack source, ItemStack destination) {
-
-    Map<Enchantment, Integer> mapSource = EnchantmentHelper.getEnchantments(source);
-    Map<Enchantment, Integer> mapDestination = EnchantmentHelper.getEnchantments(destination);
-
-    for (Enchantment srcEnch : mapSource.keySet()) {
-
-      if (srcEnch == null) {
-        continue;
-      }
-
-      if (!srcEnch.canApply(destination)) {
-        return;
-      }
-
-      int destLevel = mapDestination.getOrDefault(srcEnch, 0);
-      int srcLevel = mapSource.get(srcEnch);
-      srcLevel = destLevel == srcLevel ? srcLevel + 1 : Math.max(srcLevel, destLevel);
-
-      for (Enchantment destEnch : mapDestination.keySet()) {
-
-        if (srcEnch != destEnch && !destEnch.isCompatibleWith(srcEnch)) {
-          return;
-        }
-      }
-
-      if (srcLevel > srcEnch.getMaxLevel()) {
-        srcLevel = srcEnch.getMaxLevel();
-      }
-      mapDestination.put(srcEnch, srcLevel);
-    }
-
-    EnchantmentHelper.setEnchantments(mapDestination, destination);
-    EnchantmentHelper.setEnchantments(new HashMap<>(), source);
   }
 }

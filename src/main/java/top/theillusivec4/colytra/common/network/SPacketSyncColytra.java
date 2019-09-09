@@ -1,5 +1,6 @@
 package top.theillusivec4.colytra.common.network;
 
+import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -9,11 +10,9 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 
-import java.util.function.Supplier;
-
 public class SPacketSyncColytra {
 
-  private int       entityId;
+  private int entityId;
   private ItemStack stack;
 
   public SPacketSyncColytra(int entityId, ItemStack stack) {
@@ -44,7 +43,7 @@ public class SPacketSyncColytra {
 
       ItemStack stack = ((LivingEntity) entity).getItemStackFromSlot(EquipmentSlotType.CHEST);
       CapabilityElytra.getCapability(stack)
-                      .ifPresent(elytraHolder -> elytraHolder.setElytra(msg.stack));
+          .ifPresent(elytraHolder -> elytraHolder.setElytra(msg.stack));
     });
     ctx.get().setPacketHandled(true);
   }

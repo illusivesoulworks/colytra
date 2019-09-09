@@ -57,8 +57,8 @@ public class Colytra {
       ElytraAttachmentRecipe.CRAFTING_ATTACH_ELYTRA.setRegistryName(ATTACH_ELYTRA);
       ElytraDetachmentRecipe.CRAFTING_DETACH_ELYTRA.setRegistryName(DETACH_ELYTRA);
       evt.getRegistry()
-         .registerAll(ElytraAttachmentRecipe.CRAFTING_ATTACH_ELYTRA,
-                      ElytraDetachmentRecipe.CRAFTING_DETACH_ELYTRA);
+          .registerAll(ElytraAttachmentRecipe.CRAFTING_ATTACH_ELYTRA,
+              ElytraDetachmentRecipe.CRAFTING_DETACH_ELYTRA);
     }
   }
 }
