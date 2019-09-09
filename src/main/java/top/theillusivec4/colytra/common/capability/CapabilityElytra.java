@@ -126,6 +126,10 @@ public class CapabilityElytra {
     @Override
     public boolean isUseable() {
 
+      if (elytra.isEmpty()) {
+        return false;
+      }
+
       ColytraConfig.ColytraMode colytraMode = ColytraConfig.getColytraMode();
 
       if (colytraMode == ColytraConfig.ColytraMode.NORMAL) {
