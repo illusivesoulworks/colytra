@@ -4,7 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project does not adhere to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 This project uses MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
-## [2.0-beta5](https://github.com/TheIllusiveC4/Colytra/compare/c479b0ab44ed2f8d8bda2e8cfe79ca4c0db82348...master) - 2019.09.09
+## [2.0](https://github.com/TheIllusiveC4/Colytra/compare/c19a8004ef29f429090bec2ccb168d115d254fce...master) - 2019.09.14
+### Changed
+- Updated to Forge RB 28.1.0
+- Updated to Caelus 1.14.4-1.0
+
+## [2.0-beta5](https://github.com/TheIllusiveC4/Colytra/compare/c479b0ab44ed2f8d8bda2e8cfe79ca4c0db82348...c19a8004ef29f429090bec2ccb168d115d254fce) - 2019.09.09
 ### Added
 - Chinese localization (thank you tian0501011)
 ### Fixed
