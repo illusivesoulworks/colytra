@@ -14,7 +14,7 @@ ${mod_description}
 [[dependencies.colytra]]
     modId="forge"
     mandatory=true
-    versionRange="[28.0.45,)"
+    versionRange="[28.1.0,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.colytra]]
@@ -26,6 +26,6 @@ ${mod_description}
 [[dependencies.colytra]]
     modId="caelus"
     mandatory=true
-    versionRange="[FORGE-1.14.4-0.11,)"
+    versionRange="[FORGE-1.14.4-1.0,)"
     ordering="NONE"
     side="BOTH"
