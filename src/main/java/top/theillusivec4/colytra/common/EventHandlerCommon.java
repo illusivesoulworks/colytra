@@ -29,20 +29,25 @@ import top.theillusivec4.colytra.common.network.SPacketSyncColytra;
 
 public class EventHandlerCommon {
 
-  private static AttributeModifier FLIGHT_MODIFIER =
+  public static AttributeModifier FLIGHT_MODIFIER =
       new AttributeModifier(UUID.fromString("668bdbee-32b6-4c4b-bf6a-5a30f4d02e37"),
           "Flight modifier", 1.0d, AttributeModifier.Operation.ADDITION);
 
   private static void updateColytra(CapabilityElytra.IElytra elytraHolder, PlayerEntity player) {
 
+    IAttributeInstance attributeInstance = player.getAttribute(CaelusAPI.ELYTRA_FLIGHT);
+
+    if (!elytraHolder.isUseable()) {
+      attributeInstance.removeModifier(FLIGHT_MODIFIER);
+      return;
+    } else if (!attributeInstance.hasModifier(FLIGHT_MODIFIER)) {
+      attributeInstance.applyModifier(FLIGHT_MODIFIER);
+    }
+
     Integer ticksFlying =
         ObfuscationReflectionHelper.getPrivateValue(LivingEntity.class, player, "field_184629_bo");
 
-    if (ticksFlying == null) {
-      return;
-    }
-
-    if ((ticksFlying + 1) % 20 != 0) {
+    if (ticksFlying == null || (ticksFlying + 1) % 20 != 0) {
       return;
     }
 

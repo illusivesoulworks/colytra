@@ -5,6 +5,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ElytraItem;
 import net.minecraft.item.Item;
@@ -25,8 +26,10 @@ import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
+import top.theillusivec4.caelus.api.CaelusAPI;
 import top.theillusivec4.colytra.Colytra;
 import top.theillusivec4.colytra.common.ColytraConfig;
+import top.theillusivec4.colytra.common.EventHandlerCommon;
 
 public class CapabilityElytra {
 
