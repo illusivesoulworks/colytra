@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.Level;
 
@@ -35,7 +36,6 @@ import java.util.Random;
 
 public class ASMHooks {
 
-    private static final Field TICKS_FLYING = ReflectionHelper.findField(EntityLivingBase.class, "ticksElytraFlying", "field_184629_bo");
     private static Random rand = new Random();
 
     public static void updateColytra(EntityLivingBase entityLivingBase) {
@@ -131,11 +131,6 @@ public class ASMHooks {
     }
 
     private static int getTicksElytraFlying(EntityLivingBase entity) {
-        try {
-            return (int) TICKS_FLYING.get(entity);
-        } catch (IllegalAccessException e) {
-            Colytra.logger.log(Level.INFO, "Cannot get ticksElytraFlying in EntityLivingBase!");
-            return 0;
-        }
+        return ObfuscationReflectionHelper.getPrivateValue(EntityLivingBase.class, entity, "field_184629_bo");
     }
 }
