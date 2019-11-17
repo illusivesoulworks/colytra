@@ -2,16 +2,19 @@ buildscript {
     repositories {
         jcenter()
         maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = "https://plugins.gradle.org/m2/" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'com.wynprice.cursemaven:CurseMaven:2.1.1'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.wynprice.cursemaven'
 //Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
 
-version = "1.12.2-1.2.0.2"
+version = "1.12.2-1.2.0.3"
 group = "c4.colytra" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "colytra"
 
@@ -23,14 +26,9 @@ compileJava {
 minecraft {
     version = "1.12.2-14.23.5.2838"
     runDir = "run"
-    
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
     mappings = "stable_39"
-    // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    replace '@FINGERPRINT@', project.findProperty('signSHA1')
+    replaceIn("Colytra.java")
 }
 
 jar {
@@ -60,7 +58,9 @@ dependencies {
     // for more info...
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
-
+    deobfProvided "curse.maven:baubles:2518667"
+    deobfProvided "curse.maven:quark:2759240"
+    deobfProvided "curse.maven:autoreglib:2746011"
 }
 
 sourceSets {
@@ -69,6 +69,10 @@ sourceSets {
             srcDirs += 'docs'
         }
     }
+}
+
+runClient {
+    jvmArgs "-Dfml.coreMods.load=c4.colytra.asm.ColytraLoadingPlugin"
 }
 
 processResources {

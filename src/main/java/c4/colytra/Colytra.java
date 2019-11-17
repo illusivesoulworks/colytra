@@ -22,13 +22,13 @@ import org.apache.logging.log4j.Logger;
 @Mod(   modid = Colytra.MODID,
         name = Colytra.MODNAME,
         version = Colytra.MODVER,
-        dependencies = "required-after:forge@[14.23.4.2705,);after:baubles;after:quark",
-        acceptedMinecraftVersions = "[1.12.1, 1.13)",
-        certificateFingerprint = "5d5b8aee896a4f5ea3f3114784742662a67ad32f")
+        dependencies = "required-after:forge@[14.23.5.2779,);after:baubles;after:quark",
+        acceptedMinecraftVersions = "[1.12.2, 1.13)",
+        certificateFingerprint = "@FINGERPRINT@")
 public class Colytra {
     public static final String MODID = "colytra";
     public static final String MODNAME = "Colytra";
-    public static final String MODVER = "1.2.0.2";
+    public static final String MODVER = "1.2.0.3";
 
     @SidedProxy(clientSide = "c4.colytra.proxy.ClientProxy", serverSide = "c4.colytra.proxy.CommonProxy")
     public static CommonProxy proxy;
