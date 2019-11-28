@@ -19,7 +19,6 @@ import top.theillusivec4.colytra.common.EventHandlerCommon;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 import top.theillusivec4.colytra.common.crafting.ElytraAttachmentRecipe;
 import top.theillusivec4.colytra.common.crafting.ElytraDetachmentRecipe;
-import top.theillusivec4.colytra.common.network.NetworkHandler;
 
 @Mod(Colytra.MODID)
 public class Colytra {
@@ -39,9 +38,7 @@ public class Colytra {
   }
 
   private void setup(final FMLCommonSetupEvent evt) {
-
     CapabilityElytra.register();
-    NetworkHandler.register();
     MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
   }
 

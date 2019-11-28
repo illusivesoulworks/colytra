@@ -20,7 +20,7 @@ import top.theillusivec4.colytra.common.ElytraNBT;
 
 public class EventHandlerClient {
 
-  private static void getColytraToolip(ItemStack chestStack, List<ITextComponent> tooltip) {
+  private static void getColytraTooltip(ItemStack chestStack, List<ITextComponent> tooltip) {
 
     if (!ElytraNBT.hasUpgrade(chestStack)) {
       return;
@@ -91,6 +91,6 @@ public class EventHandlerClient {
   public void onItemTooltip(ItemTooltipEvent evt) {
     ItemStack itemstack = evt.getItemStack();
     List<ITextComponent> tooltip = evt.getToolTip();
-    getColytraToolip(itemstack, tooltip);
+    getColytraTooltip(itemstack, tooltip);
   }
 }

@@ -21,8 +21,8 @@ import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 
 public class ElytraAttachmentRecipe extends SpecialRecipe {
 
-  public static final SpecialRecipeSerializer<ElytraAttachmentRecipe> CRAFTING_ATTACH_ELYTRA =
-      new SpecialRecipeSerializer<>(ElytraAttachmentRecipe::new);
+  public static final SpecialRecipeSerializer<ElytraAttachmentRecipe> CRAFTING_ATTACH_ELYTRA = new SpecialRecipeSerializer<>(
+      ElytraAttachmentRecipe::new);
 
   public ElytraAttachmentRecipe(ResourceLocation id) {
     super(id);
@@ -32,31 +32,26 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
     Map<Enchantment, Integer> mapSource = EnchantmentHelper.getEnchantments(source);
     Map<Enchantment, Integer> mapDestination = EnchantmentHelper.getEnchantments(destination);
 
-    for (Enchantment srcEnch : mapSource.keySet()) {
+    for (Enchantment enchantment : mapSource.keySet()) {
 
-      if (srcEnch == null) {
+      if (enchantment == null || !enchantment.canApply(destination)) {
         continue;
       }
-
-      if (!srcEnch.canApply(destination)) {
-        return;
-      }
-
-      int destLevel = mapDestination.getOrDefault(srcEnch, 0);
-      int srcLevel = mapSource.get(srcEnch);
+      int destLevel = mapDestination.getOrDefault(enchantment, 0);
+      int srcLevel = mapSource.get(enchantment);
       srcLevel = destLevel == srcLevel ? srcLevel + 1 : Math.max(srcLevel, destLevel);
 
       for (Enchantment destEnch : mapDestination.keySet()) {
 
-        if (srcEnch != destEnch && !destEnch.isCompatibleWith(srcEnch)) {
+        if (enchantment != destEnch && !destEnch.isCompatibleWith(enchantment)) {
           return;
         }
       }
 
-      if (srcLevel > srcEnch.getMaxLevel()) {
-        srcLevel = srcEnch.getMaxLevel();
+      if (srcLevel > enchantment.getMaxLevel()) {
+        srcLevel = enchantment.getMaxLevel();
       }
-      mapDestination.put(srcEnch, srcLevel);
+      mapDestination.put(enchantment, srcLevel);
     }
 
     EnchantmentHelper.setEnchantments(mapDestination, destination);
@@ -104,9 +99,8 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
       if (currentStack.isEmpty()) {
         continue;
       }
-
-      LazyOptional<CapabilityElytra.IElytra> capability =
-          CapabilityElytra.getCapability(currentStack);
+      LazyOptional<CapabilityElytra.IElytra> capability = CapabilityElytra
+          .getCapability(currentStack);
 
       if (capability.isPresent()) {
 

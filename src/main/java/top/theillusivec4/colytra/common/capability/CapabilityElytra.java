@@ -30,6 +30,7 @@ import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.ElytraNBT;
 
 //todo: remove in 1.15
+@Deprecated
 public class CapabilityElytra {
 
   @CapabilityInject(IElytra.class)

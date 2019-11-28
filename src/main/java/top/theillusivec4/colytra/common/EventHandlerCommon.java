@@ -8,7 +8,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -25,8 +24,6 @@ import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.network.PacketDistributor;
 import top.theillusivec4.caelus.api.CaelusAPI;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
-import top.theillusivec4.colytra.common.network.NetworkHandler;
-import top.theillusivec4.colytra.common.network.SPacketSyncColytra;
 
 public class EventHandlerCommon {
 
@@ -55,10 +52,6 @@ public class EventHandlerCommon {
       return;
     }
     ElytraNBT.damageElytra(player, chestStack, elytraStack, 1);
-
-//    if (player instanceof ServerPlayerEntity) {
-//      sendColytraSyncPacket(elytraHolder, player);
-//    }
   }
 
   private static void handleColytraMending(ItemStack chestStack, PlayerXpEvent.PickupXp evt,
@@ -79,10 +72,6 @@ public class EventHandlerCommon {
       xpOrb.xpValue -= durabilityToXp(i);
       elytraStack.setDamage(elytraStack.getDamage() - i);
 
-//      if (player instanceof ServerPlayerEntity) {
-//        sendColytraSyncPacket(elytraHolder, player);
-//      }
-
       if (xpOrb.xpValue > 0) {
         player.giveExperiencePoints(xpOrb.xpValue);
       }
@@ -92,12 +81,10 @@ public class EventHandlerCommon {
   }
 
   private static int durabilityToXp(int durability) {
-
     return durability / 2;
   }
 
   private static int xpToDurability(int xp) {
-
     return xp * 2;
   }
 
@@ -126,9 +113,7 @@ public class EventHandlerCommon {
     ItemStack outputElytra = stack.copy();
     outputElytra.setDamage(newDamage);
     outputElytra.setRepairCost(stack.getRepairCost() * 2 + 1);
-
-    CapabilityElytra.getCapability(output)
-        .ifPresent(elytraHolder -> ElytraNBT.setElytra(output, outputElytra));
+    ElytraNBT.setElytra(output, outputElytra);
     int xpCost = membraneToUse + chestStack.getRepairCost() + right.getRepairCost();
     String name = evt.getName();
 
@@ -139,13 +124,6 @@ public class EventHandlerCommon {
     evt.setMaterialCost(membraneToUse);
     evt.setCost(xpCost);
     evt.setOutput(output);
-  }
-
-  private static void sendColytraSyncPacket(CapabilityElytra.IElytra elytraHolder,
-      PlayerEntity player) {
-
-    NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-        new SPacketSyncColytra(player.getEntityId(), elytraHolder.getElytra()));
   }
 
   @SubscribeEvent

@@ -11,6 +11,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.colytra.common.ColytraConfig;
+import top.theillusivec4.colytra.common.ElytraNBT;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 
 public class ElytraDetachmentRecipe extends SpecialRecipe {
@@ -19,7 +20,6 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
       new SpecialRecipeSerializer<>(ElytraDetachmentRecipe::new);
 
   public ElytraDetachmentRecipe(ResourceLocation id) {
-
     super(id);
   }
 
@@ -29,51 +29,47 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
     if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
       return false;
     }
-
     ItemStack itemstack = ItemStack.EMPTY;
 
     for (int i = 0; i < inv.getSizeInventory(); ++i) {
       ItemStack currentStack = inv.getStackInSlot(i);
 
-      if (!currentStack.isEmpty()) {
+      if (currentStack.isEmpty()) {
+        continue;
+      }
 
-        if (CapabilityElytra.getCapability(currentStack).isPresent()) {
+      if (CapabilityElytra.getCapability(currentStack).isPresent()) {
 
-          if (!itemstack.isEmpty()) {
-            return false;
-          }
-          itemstack = currentStack;
-        } else {
+        if (!itemstack.isEmpty() || !ElytraNBT.hasUpgrade(currentStack)) {
           return false;
         }
+        itemstack = currentStack;
+      } else {
+        return false;
       }
     }
-
     return !itemstack.isEmpty();
   }
 
   @Nonnull
   @Override
   public ItemStack getCraftingResult(@Nonnull CraftingInventory inv) {
-
     ItemStack itemstack = ItemStack.EMPTY;
 
     for (int k = 0; k < inv.getSizeInventory(); ++k) {
-      ItemStack itemstack1 = inv.getStackInSlot(k);
+      ItemStack currentStack = inv.getStackInSlot(k);
 
-      if (!itemstack1.isEmpty()) {
+      if (!currentStack.isEmpty()) {
 
         if (!itemstack.isEmpty()) {
           return ItemStack.EMPTY;
         }
 
         LazyOptional<CapabilityElytra.IElytra> capability =
-            CapabilityElytra.getCapability(itemstack1);
-        itemstack =
-            capability.map(elytraHolder -> elytraHolder.getElytra().copy()).orElse(ItemStack.EMPTY);
+            CapabilityElytra.getCapability(currentStack);
 
-        if (itemstack.isEmpty()) {
-          return ItemStack.EMPTY;
+        if (capability.isPresent()) {
+          itemstack = ElytraNBT.getElytra(currentStack);
         }
       }
     }
@@ -88,18 +84,15 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
   @Nonnull
   @Override
   public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
-
     NonNullList<ItemStack> nonnulllist =
         NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 
     for (int i = 0; i < nonnulllist.size(); ++i) {
-      ItemStack itemstack = inv.getStackInSlot(i);
+      ItemStack currentStack = inv.getStackInSlot(i);
 
-      if (!itemstack.isEmpty()) {
-        LazyOptional<CapabilityElytra.IElytra> capability =
-            CapabilityElytra.getCapability(itemstack);
-//        capability.ifPresent(elytraHolder -> elytraHolder.setElytra(ItemStack.EMPTY));
-        nonnulllist.set(i, itemstack.copy());
+      if (!currentStack.isEmpty() && ElytraNBT.hasUpgrade(currentStack)) {
+        currentStack.removeChildTag(ElytraNBT.ELYTRA_TAG);
+        nonnulllist.set(i, currentStack.copy());
         break;
       }
     }
