@@ -11,6 +11,8 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import top.theillusivec4.colytra.client.EventHandlerClient;
 import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.EventHandlerCommon;
@@ -23,6 +25,7 @@ import top.theillusivec4.colytra.common.network.NetworkHandler;
 public class Colytra {
 
   public static final String MODID = "colytra";
+  public static final Logger LOGGER = LogManager.getLogger();
 
   private static final String ATTACH_ELYTRA = "elytra_attachment";
   private static final String DETACH_ELYTRA = "elytra_detachment";

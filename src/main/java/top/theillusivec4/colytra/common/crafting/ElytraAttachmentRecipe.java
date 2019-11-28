@@ -11,10 +11,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.colytra.common.ColytraConfig;
+import top.theillusivec4.colytra.common.ElytraNBT;
 import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 
 public class ElytraAttachmentRecipe extends SpecialRecipe {
@@ -23,12 +25,10 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
       new SpecialRecipeSerializer<>(ElytraAttachmentRecipe::new);
 
   public ElytraAttachmentRecipe(ResourceLocation id) {
-
     super(id);
   }
 
   private static void mergeEnchantments(ItemStack source, ItemStack destination) {
-
     Map<Enchantment, Integer> mapSource = EnchantmentHelper.getEnchantments(source);
     Map<Enchantment, Integer> mapDestination = EnchantmentHelper.getEnchantments(destination);
 
@@ -65,7 +65,6 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
 
   @Override
   public boolean matches(@Nonnull CraftingInventory inv, @Nonnull World worldIn) {
-
     ItemStack itemstack = ItemStack.EMPTY;
     ItemStack elytra = ItemStack.EMPTY;
 
@@ -78,7 +77,7 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
 
       if (CapabilityElytra.getCapability(currentStack).isPresent()) {
 
-        if (!itemstack.isEmpty()) {
+        if (!itemstack.isEmpty() || ElytraNBT.hasUpgrade(currentStack)) {
           return false;
         }
         itemstack = currentStack;
@@ -90,14 +89,12 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
         elytra = currentStack;
       }
     }
-
     return !itemstack.isEmpty() && !elytra.isEmpty();
   }
 
   @Nonnull
   @Override
   public ItemStack getCraftingResult(@Nonnull CraftingInventory inv) {
-
     ItemStack itemstack = ItemStack.EMPTY;
     ItemStack elytra = ItemStack.EMPTY;
 
@@ -128,14 +125,12 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
     }
 
     if (!itemstack.isEmpty() && !elytra.isEmpty()) {
-      final ItemStack elytraStack = elytra;
 
       if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
-        mergeEnchantments(elytraStack, itemstack);
-        itemstack.setRepairCost(elytraStack.getRepairCost() + itemstack.getRepairCost());
+        mergeEnchantments(elytra, itemstack);
+        itemstack.setRepairCost(elytra.getRepairCost() + itemstack.getRepairCost());
       }
-      CapabilityElytra.getCapability(itemstack)
-          .ifPresent(elytraHolder -> elytraHolder.setElytra(elytraStack));
+      itemstack.getOrCreateTag().put(ElytraNBT.ELYTRA_TAG, elytra.write(new CompoundNBT()));
       return itemstack;
     } else {
       return ItemStack.EMPTY;
@@ -144,14 +139,12 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
 
   @Override
   public boolean canFit(int width, int height) {
-
     return width * height >= 2;
   }
 
   @Nonnull
   @Override
   public IRecipeSerializer<?> getSerializer() {
-
     return CRAFTING_ATTACH_ELYTRA;
   }
 }

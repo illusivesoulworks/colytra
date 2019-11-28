@@ -15,8 +15,9 @@ import net.minecraft.item.Items;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
-import net.minecraftforge.event.entity.player.PlayerPickupXpEvent;
+import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
@@ -29,52 +30,45 @@ import top.theillusivec4.colytra.common.network.SPacketSyncColytra;
 
 public class EventHandlerCommon {
 
-  public static AttributeModifier FLIGHT_MODIFIER =
-      new AttributeModifier(UUID.fromString("668bdbee-32b6-4c4b-bf6a-5a30f4d02e37"),
-          "Flight modifier", 1.0d, AttributeModifier.Operation.ADDITION);
+  public static AttributeModifier FLIGHT_MODIFIER = new AttributeModifier(
+      UUID.fromString("668bdbee-32b6-4c4b-bf6a-5a30f4d02e37"), "Flight modifier", 1.0d,
+      AttributeModifier.Operation.ADDITION);
 
-  private static void updateColytra(CapabilityElytra.IElytra elytraHolder, PlayerEntity player) {
+  private static void updateColytra(ItemStack chestStack, PlayerEntity player) {
+    ItemStack elytraStack = ElytraNBT.getElytra(chestStack);
 
+    if (elytraStack.isEmpty()) {
+      return;
+    }
     IAttributeInstance attributeInstance = player.getAttribute(CaelusAPI.ELYTRA_FLIGHT);
 
-    if (!elytraHolder.isUseable()) {
+    if (!ElytraNBT.isUseable(chestStack, elytraStack)) {
       attributeInstance.removeModifier(FLIGHT_MODIFIER);
       return;
     } else if (!attributeInstance.hasModifier(FLIGHT_MODIFIER)) {
       attributeInstance.applyModifier(FLIGHT_MODIFIER);
     }
-
-    Integer ticksFlying =
-        ObfuscationReflectionHelper.getPrivateValue(LivingEntity.class, player, "field_184629_bo");
+    Integer ticksFlying = ObfuscationReflectionHelper
+        .getPrivateValue(LivingEntity.class, player, "field_184629_bo");
 
     if (ticksFlying == null || (ticksFlying + 1) % 20 != 0) {
       return;
     }
+    ElytraNBT.damageElytra(player, chestStack, elytraStack, 1);
 
-    elytraHolder.damageElytra(player, 1);
-
-    if (player instanceof ServerPlayerEntity) {
-      sendColytraSyncPacket(elytraHolder, player);
-    }
+//    if (player instanceof ServerPlayerEntity) {
+//      sendColytraSyncPacket(elytraHolder, player);
+//    }
   }
 
-  private static void handleColytraMending(CapabilityElytra.IElytra elytraHolder,
-      PlayerPickupXpEvent evt, PlayerEntity player) {
+  private static void handleColytraMending(ItemStack chestStack, PlayerXpEvent.PickupXp evt,
+      PlayerEntity player) {
+    ItemStack elytraStack = ElytraNBT.getElytra(chestStack);
 
-    ItemStack elytraStack = elytraHolder.getElytra();
-
-    if (elytraStack.isEmpty()) {
+    if (elytraStack.isEmpty() || elytraStack.getDamage() <= 0
+        || EnchantmentHelper.getEnchantmentLevel(Enchantments.MENDING, elytraStack) <= 0) {
       return;
     }
-
-    if (elytraStack.getDamage() <= 0) {
-      return;
-    }
-
-    if (EnchantmentHelper.getEnchantmentLevel(Enchantments.MENDING, elytraStack) <= 0) {
-      return;
-    }
-
     evt.setCanceled(true);
     ExperienceOrbEntity xpOrb = evt.getOrb();
 
@@ -85,9 +79,9 @@ public class EventHandlerCommon {
       xpOrb.xpValue -= durabilityToXp(i);
       elytraStack.setDamage(elytraStack.getDamage() - i);
 
-      if (player instanceof ServerPlayerEntity) {
-        sendColytraSyncPacket(elytraHolder, player);
-      }
+//      if (player instanceof ServerPlayerEntity) {
+//        sendColytraSyncPacket(elytraHolder, player);
+//      }
 
       if (xpOrb.xpValue > 0) {
         player.giveExperiencePoints(xpOrb.xpValue);
@@ -107,22 +101,18 @@ public class EventHandlerCommon {
     return xp * 2;
   }
 
-  private static void handleColytraRepair(CapabilityElytra.IElytra elytraHolder,
-      AnvilUpdateEvent evt) {
+  private static void handleColytraRepair(ItemStack chestStack, AnvilUpdateEvent evt) {
+    ItemStack stack = ElytraNBT.getElytra(chestStack);
 
+    if (stack.isEmpty()) {
+      return;
+    }
     ItemStack right = evt.getRight();
-    ItemStack left = evt.getLeft();
-    ItemStack stack = elytraHolder.getElytra();
     int toRepair = stack.getDamage();
 
-    if (right.getItem() != Items.PHANTOM_MEMBRANE) {
+    if (right.getItem() != Items.PHANTOM_MEMBRANE || toRepair == 0) {
       return;
     }
-
-    if (toRepair == 0) {
-      return;
-    }
-
     int membraneToUse = 0;
 
     while (toRepair > 0) {
@@ -132,22 +122,20 @@ public class EventHandlerCommon {
     membraneToUse = Math.min(membraneToUse, right.getCount());
     int newDamage = Math.max(stack.getDamage() - membraneToUse * 108, 0);
 
-    ItemStack output = left.copy();
+    ItemStack output = chestStack.copy();
     ItemStack outputElytra = stack.copy();
     outputElytra.setDamage(newDamage);
     outputElytra.setRepairCost(stack.getRepairCost() * 2 + 1);
 
     CapabilityElytra.getCapability(output)
-        .ifPresent(outputElytraHolder -> outputElytraHolder.setElytra(outputElytra));
-
-    int xpCost = membraneToUse + left.getRepairCost() + right.getRepairCost();
+        .ifPresent(elytraHolder -> ElytraNBT.setElytra(output, outputElytra));
+    int xpCost = membraneToUse + chestStack.getRepairCost() + right.getRepairCost();
     String name = evt.getName();
 
-    if (!name.isEmpty() && !name.equals(left.getDisplayName().getString())) {
+    if (!name.isEmpty() && !name.equals(chestStack.getDisplayName().getString())) {
       output.setDisplayName(new StringTextComponent(name));
       xpCost++;
     }
-
     evt.setMaterialCost(membraneToUse);
     evt.setCost(xpCost);
     evt.setOutput(output);
@@ -157,8 +145,7 @@ public class EventHandlerCommon {
       PlayerEntity player) {
 
     NetworkHandler.INSTANCE.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),
-        new SPacketSyncColytra(player.getEntityId(),
-            elytraHolder.getElytra()));
+        new SPacketSyncColytra(player.getEntityId(), elytraHolder.getElytra()));
   }
 
   @SubscribeEvent
@@ -178,8 +165,7 @@ public class EventHandlerCommon {
     attributeInstance.removeModifier(FLIGHT_MODIFIER);
 
     CapabilityElytra.getCapability(to).ifPresent(elytraHolder -> {
-
-      if (elytraHolder.isUseable()) {
+      if (ElytraNBT.isUseable(to, ElytraNBT.getElytra(to))) {
         attributeInstance.applyModifier(FLIGHT_MODIFIER);
       }
     });
@@ -188,11 +174,7 @@ public class EventHandlerCommon {
   @SubscribeEvent
   public void onPlayerTick(TickEvent.PlayerTickEvent evt) {
 
-    if (evt.side != LogicalSide.SERVER) {
-      return;
-    }
-
-    if (evt.phase != TickEvent.Phase.END) {
+    if (evt.side != LogicalSide.SERVER || evt.phase != Phase.END) {
       return;
     }
 
@@ -200,29 +182,26 @@ public class EventHandlerCommon {
     ItemStack stack = player.getItemStackFromSlot(EquipmentSlotType.CHEST);
 
     CapabilityElytra.getCapability(stack).ifPresent(elytraHolder -> {
-
       if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.PERFECT) {
-        updateColytra(elytraHolder, player);
+        updateColytra(stack, player);
       }
     });
   }
 
   @SubscribeEvent
-  public void onPlayerXPPickUp(PlayerPickupXpEvent evt) {
+  public void onPlayerXPPickUp(PlayerXpEvent.PickupXp evt) {
 
     if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
       return;
     }
+    PlayerEntity player = evt.getPlayer();
 
-    if (evt.getEntityPlayer().world.isRemote) {
+    if (player.world.isRemote) {
       return;
     }
-
-    PlayerEntity player = evt.getEntityPlayer();
     ItemStack stack = player.getItemStackFromSlot(EquipmentSlotType.CHEST);
-
     CapabilityElytra.getCapability(stack)
-        .ifPresent(elytraHolder -> handleColytraMending(elytraHolder, evt, player));
+        .ifPresent(elytraHolder -> handleColytraMending(stack, evt, player));
   }
 
   @SubscribeEvent(priority = EventPriority.HIGH)
@@ -231,9 +210,7 @@ public class EventHandlerCommon {
     if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
       return;
     }
-
     ItemStack left = evt.getLeft();
-    CapabilityElytra.getCapability(left)
-        .ifPresent(elytraHolder -> handleColytraRepair(elytraHolder, evt));
+    CapabilityElytra.getCapability(left).ifPresent(elytraHolder -> handleColytraRepair(left, evt));
   }
 }

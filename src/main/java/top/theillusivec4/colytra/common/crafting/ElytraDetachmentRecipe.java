@@ -98,7 +98,7 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
       if (!itemstack.isEmpty()) {
         LazyOptional<CapabilityElytra.IElytra> capability =
             CapabilityElytra.getCapability(itemstack);
-        capability.ifPresent(elytraHolder -> elytraHolder.setElytra(ItemStack.EMPTY));
+//        capability.ifPresent(elytraHolder -> elytraHolder.setElytra(ItemStack.EMPTY));
         nonnulllist.set(i, itemstack.copy());
         break;
       }

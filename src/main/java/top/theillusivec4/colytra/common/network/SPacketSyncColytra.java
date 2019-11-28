@@ -42,8 +42,8 @@ public class SPacketSyncColytra {
       }
 
       ItemStack stack = ((LivingEntity) entity).getItemStackFromSlot(EquipmentSlotType.CHEST);
-      CapabilityElytra.getCapability(stack)
-          .ifPresent(elytraHolder -> elytraHolder.setElytra(msg.stack));
+//      CapabilityElytra.getCapability(stack)
+//          .ifPresent(elytraHolder -> elytraHolder.setElytra(msg.stack));
     });
     ctx.get().setPacketHandled(true);
   }
