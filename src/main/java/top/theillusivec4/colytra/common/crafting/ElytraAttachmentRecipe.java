@@ -1,11 +1,14 @@
 package top.theillusivec4.colytra.common.crafting;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.MobEntity;
 import net.minecraft.inventory.CraftingInventory;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ElytraItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -14,10 +17,8 @@ import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.ElytraNBT;
-import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 
 public class ElytraAttachmentRecipe extends SpecialRecipe {
 
@@ -53,7 +54,6 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
       }
       mapDestination.put(enchantment, srcLevel);
     }
-
     EnchantmentHelper.setEnchantments(mapDestination, destination);
     EnchantmentHelper.setEnchantments(new HashMap<>(), source);
   }
@@ -70,7 +70,7 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
         continue;
       }
 
-      if (CapabilityElytra.getCapability(currentStack).isPresent()) {
+      if (isValid(currentStack)) {
 
         if (!itemstack.isEmpty() || ElytraNBT.hasUpgrade(currentStack)) {
           return false;
@@ -99,10 +99,8 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
       if (currentStack.isEmpty()) {
         continue;
       }
-      LazyOptional<CapabilityElytra.IElytra> capability = CapabilityElytra
-          .getCapability(currentStack);
 
-      if (capability.isPresent()) {
+      if (isValid(currentStack)) {
 
         if (!itemstack.isEmpty()) {
           return ItemStack.EMPTY;
@@ -140,5 +138,20 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
   @Override
   public IRecipeSerializer<?> getSerializer() {
     return CRAFTING_ATTACH_ELYTRA;
+  }
+
+  private static boolean isValid(ItemStack stack) {
+    ColytraConfig.PermissionMode permissionMode = ColytraConfig.getPermissionMode();
+    List<String> permissionList = ColytraConfig.getPermissionList();
+    ResourceLocation resourceLocation = stack.getItem().getRegistryName();
+
+    if (resourceLocation == null) {
+      return false;
+    }
+    String key = resourceLocation.toString();
+    boolean isBlacklist = permissionMode == ColytraConfig.PermissionMode.BLACKLIST;
+    return isBlacklist != permissionList.contains(key)
+        && MobEntity.getSlotForItemStack(stack) == EquipmentSlotType.CHEST && !(stack
+        .getItem() instanceof ElytraItem);
   }
 }

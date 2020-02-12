@@ -2,7 +2,6 @@ package top.theillusivec4.colytra.client;
 
 import java.util.List;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -14,7 +13,6 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
-import top.theillusivec4.caelus.api.event.RenderElytraEvent;
 import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.ElytraNBT;
 
@@ -69,20 +67,6 @@ public class EventHandlerClient {
         tooltip.add(new StringTextComponent(" ").appendSibling(
             new TranslationTextComponent("tooltip.colytra.broken")
                 .applyTextStyle(TextFormatting.RED)));
-      }
-    }
-  }
-
-  @SubscribeEvent
-  public void onRenderElytra(RenderElytraEvent evt) {
-    ItemStack stack = evt.getEntityLiving().getItemStackFromSlot(EquipmentSlotType.CHEST);
-    ItemStack elytraStack = ElytraNBT.getElytra(stack);
-
-    if (!elytraStack.isEmpty()) {
-      evt.setRenderElytra(true);
-
-      if (elytraStack.isEnchanted()) {
-        evt.setRenderEnchantmentGlow(true);
       }
     }
   }

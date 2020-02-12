@@ -9,10 +9,8 @@ import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.ElytraNBT;
-import top.theillusivec4.colytra.common.capability.CapabilityElytra;
 
 public class ElytraDetachmentRecipe extends SpecialRecipe {
 
@@ -38,15 +36,10 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
         continue;
       }
 
-      if (CapabilityElytra.getCapability(currentStack).isPresent()) {
-
-        if (!itemstack.isEmpty() || !ElytraNBT.hasUpgrade(currentStack)) {
-          return false;
-        }
-        itemstack = currentStack;
-      } else {
+      if (!itemstack.isEmpty() || !ElytraNBT.hasUpgrade(currentStack)) {
         return false;
       }
+      itemstack = currentStack;
     }
     return !itemstack.isEmpty();
   }
@@ -64,13 +57,7 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
         if (!itemstack.isEmpty()) {
           return ItemStack.EMPTY;
         }
-
-        LazyOptional<CapabilityElytra.IElytra> capability =
-            CapabilityElytra.getCapability(currentStack);
-
-        if (capability.isPresent()) {
-          itemstack = ElytraNBT.getElytra(currentStack);
-        }
+        itemstack = ElytraNBT.getElytra(currentStack);
       }
     }
 
@@ -101,14 +88,12 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
 
   @Override
   public boolean canFit(int width, int height) {
-
     return width * height >= 2;
   }
 
   @Nonnull
   @Override
   public IRecipeSerializer<?> getSerializer() {
-
     return CRAFTING_DETACH_ELYTRA;
   }
 }
