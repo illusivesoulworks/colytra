@@ -21,6 +21,7 @@ package top.theillusivec4.colytra.client;
 
 import java.util.List;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -32,10 +33,11 @@ import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
-import top.theillusivec4.colytra.common.ColytraConfig;
+import top.theillusivec4.caelus.api.RenderElytraEvent;
 import top.theillusivec4.colytra.common.ElytraNBT;
+import top.theillusivec4.colytra.server.ColytraServerConfig;
 
-public class EventHandlerClient {
+public class ClientEventHandler {
 
   private static void getColytraTooltip(ItemStack chestStack, List<ITextComponent> tooltip) {
 
@@ -47,12 +49,11 @@ public class EventHandlerClient {
     if (elytraStack.isEmpty()) {
       return;
     }
-
     tooltip.add(new StringTextComponent(""));
     tooltip.add(
-        new TranslationTextComponent("item.minecraft.elytra").applyTextStyle(TextFormatting.AQUA));
+        new TranslationTextComponent("item.minecraft.elytra").func_240699_a_(TextFormatting.AQUA));
 
-    if (ColytraConfig.getColytraMode() == ColytraConfig.ColytraMode.NORMAL) {
+    if (ColytraServerConfig.colytraMode == ColytraServerConfig.ColytraMode.NORMAL) {
 
       if (elytraStack.hasTag()) {
         int i = 0;
@@ -72,28 +73,42 @@ public class EventHandlerClient {
 
             if (enchantment != null) {
               tooltip.add(new StringTextComponent(" ")
-                  .appendSibling(enchantment.getDisplayName(nbttagcompound.getInt("lvl"))));
+                  .func_230529_a_(enchantment.getDisplayName(nbttagcompound.getInt("lvl"))));
             }
           }
         }
       }
 
       if (ElytraNBT.isUseable(chestStack, elytraStack)) {
-        tooltip.add(new StringTextComponent(" ").appendSibling(
+        tooltip.add(new StringTextComponent(" ").func_230529_a_(
             new TranslationTextComponent("item.durability",
                 elytraStack.getMaxDamage() - elytraStack.getDamage(), elytraStack.getMaxDamage())));
       } else {
-        tooltip.add(new StringTextComponent(" ").appendSibling(
+        tooltip.add(new StringTextComponent(" ").func_230529_a_(
             new TranslationTextComponent("tooltip.colytra.broken")
-                .applyTextStyle(TextFormatting.RED)));
+                .func_240699_a_(TextFormatting.RED)));
       }
     }
   }
 
   @SubscribeEvent
-  public void onItemTooltip(ItemTooltipEvent evt) {
+  public void itemTooltip(ItemTooltipEvent evt) {
     ItemStack itemstack = evt.getItemStack();
     List<ITextComponent> tooltip = evt.getToolTip();
     getColytraTooltip(itemstack, tooltip);
+  }
+
+  @SubscribeEvent
+  public void renderElytra(RenderElytraEvent evt) {
+    ItemStack stack = evt.getPlayer().getItemStackFromSlot(EquipmentSlotType.CHEST);
+    ItemStack elytraStack = ElytraNBT.getElytra(stack);
+
+    if (!elytraStack.isEmpty()) {
+      evt.setRender(true);
+
+      if (elytraStack.isEnchanted()) {
+        evt.setEnchanted(true);
+      }
+    }
   }
 }

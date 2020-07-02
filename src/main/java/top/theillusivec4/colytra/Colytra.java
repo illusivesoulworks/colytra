@@ -19,33 +19,26 @@
 
 package top.theillusivec4.colytra;
 
-import java.util.function.Function;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.InterModComms;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.config.ModConfig.ModConfigEvent;
+import net.minecraftforge.fml.config.ModConfig.Type;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.caelus.api.CaelusAPI.ElytraRender;
-import top.theillusivec4.caelus.api.CaelusAPI.IMC;
-import top.theillusivec4.colytra.client.EventHandlerClient;
-import top.theillusivec4.colytra.common.ColytraConfig;
-import top.theillusivec4.colytra.common.ElytraNBT;
-import top.theillusivec4.colytra.common.EventHandlerCommon;
+import top.theillusivec4.colytra.client.ClientEventHandler;
+import top.theillusivec4.colytra.common.CommonEventHandler;
 import top.theillusivec4.colytra.common.crafting.ElytraAttachmentRecipe;
 import top.theillusivec4.colytra.common.crafting.ElytraDetachmentRecipe;
+import top.theillusivec4.colytra.server.ColytraServerConfig;
 
 @Mod(Colytra.MODID)
 public class Colytra {
@@ -59,31 +52,29 @@ public class Colytra {
   public Colytra() {
     final IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
     eventBus.addListener(this::setup);
-    eventBus.addListener(this::enqueue);
     eventBus.addListener(this::clientSetup);
-    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ColytraConfig.serverSpec);
+    eventBus.addListener(this::config);
+    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, ColytraServerConfig.serverSpec);
   }
 
   private void setup(final FMLCommonSetupEvent evt) {
-    MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
-  }
-
-  private void enqueue(final InterModEnqueueEvent evt) {
-    InterModComms.sendTo("caelus", IMC.ELYTRA_RENDER,
-        () -> (Function<LivingEntity, ElytraRender>) (livingEntity) -> {
-          ItemStack stack = livingEntity.getItemStackFromSlot(EquipmentSlotType.CHEST);
-          ItemStack elytraStack = ElytraNBT.getElytra(stack);
-
-          if (!elytraStack.isEmpty()) {
-            return elytraStack.isEnchanted() ? ElytraRender.ENCHANTED : ElytraRender.NORMAL;
-          }
-          return ElytraRender.NONE;
-        });
+    MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
   }
 
   private void clientSetup(final FMLClientSetupEvent evt) {
-    MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
+    MinecraftForge.EVENT_BUS.register(new ClientEventHandler());
   }
+
+  private void config(final ModConfigEvent evt) {
+
+    if (evt.getConfig().getModId().equals(MODID)) {
+
+      if (evt.getConfig().getType() == Type.SERVER) {
+        ColytraServerConfig.bake();
+      }
+    }
+  }
+
 
   @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
   public static class RegistryEvents {

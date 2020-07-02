@@ -24,7 +24,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.enchantment.Enchantments;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.item.ExperienceOrbEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -34,34 +34,22 @@ import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.entity.living.LivingEquipmentChangeEvent;
 import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
-import top.theillusivec4.caelus.api.CaelusAPI;
+import top.theillusivec4.caelus.api.CaelusApi;
+import top.theillusivec4.colytra.server.ColytraServerConfig;
 
-public class EventHandlerCommon {
+public class CommonEventHandler {
 
-  public static AttributeModifier FLIGHT_MODIFIER = new AttributeModifier(
+  public static final AttributeModifier FLIGHT_MODIFIER = new AttributeModifier(
       UUID.fromString("668bdbee-32b6-4c4b-bf6a-5a30f4d02e37"), "Flight modifier", 1.0d,
       AttributeModifier.Operation.ADDITION);
 
   private static void updateColytra(ItemStack chestStack, PlayerEntity player) {
     ItemStack elytraStack = ElytraNBT.getElytra(chestStack);
-
-    if (elytraStack.isEmpty()) {
-      return;
-    }
-    IAttributeInstance attributeInstance = player.getAttribute(CaelusAPI.ELYTRA_FLIGHT);
-
-    if (!ElytraNBT.isUseable(chestStack, elytraStack)) {
-      attributeInstance.removeModifier(FLIGHT_MODIFIER);
-      return;
-    } else if (!attributeInstance.hasModifier(FLIGHT_MODIFIER)) {
-      attributeInstance.applyModifier(FLIGHT_MODIFIER);
-    }
     Integer ticksFlying = ObfuscationReflectionHelper
         .getPrivateValue(LivingEntity.class, player, "field_184629_bo");
 
@@ -144,26 +132,6 @@ public class EventHandlerCommon {
   }
 
   @SubscribeEvent
-  public void onLivingEquipmentChange(LivingEquipmentChangeEvent evt) {
-
-    if (!(evt.getEntityLiving() instanceof PlayerEntity)) {
-      return;
-    }
-
-    if (evt.getSlot() != EquipmentSlotType.CHEST) {
-      return;
-    }
-    PlayerEntity playerEntity = (PlayerEntity) evt.getEntity();
-    ItemStack to = evt.getTo();
-    IAttributeInstance attributeInstance = playerEntity.getAttribute(CaelusAPI.ELYTRA_FLIGHT);
-    attributeInstance.removeModifier(FLIGHT_MODIFIER);
-
-    if (ElytraNBT.isUseable(to, ElytraNBT.getElytra(to))) {
-      attributeInstance.applyModifier(FLIGHT_MODIFIER);
-    }
-  }
-
-  @SubscribeEvent
   public void onPlayerTick(TickEvent.PlayerTickEvent evt) {
 
     if (evt.side != LogicalSide.SERVER || evt.phase != Phase.END) {
@@ -171,16 +139,26 @@ public class EventHandlerCommon {
     }
     PlayerEntity player = evt.player;
     ItemStack stack = player.getItemStackFromSlot(EquipmentSlotType.CHEST);
+    ModifiableAttributeInstance attributeInstance = player
+        .getAttribute(CaelusApi.ELYTRA_FLIGHT.get());
 
-    if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.PERFECT) {
-      updateColytra(stack, player);
+    if (attributeInstance != null) {
+      attributeInstance.removeModifier(FLIGHT_MODIFIER);
+
+      if (ElytraNBT.isUseable(stack, ElytraNBT.getElytra(stack))) {
+        attributeInstance.func_233767_b_(FLIGHT_MODIFIER);
+
+        if (ColytraServerConfig.colytraMode != ColytraServerConfig.ColytraMode.PERFECT) {
+          updateColytra(stack, player);
+        }
+      }
     }
   }
 
   @SubscribeEvent
   public void onPlayerXPPickUp(PlayerXpEvent.PickupXp evt) {
 
-    if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
+    if (ColytraServerConfig.colytraMode != ColytraServerConfig.ColytraMode.NORMAL) {
       return;
     }
     PlayerEntity player = evt.getPlayer();
@@ -195,7 +173,7 @@ public class EventHandlerCommon {
   @SubscribeEvent(priority = EventPriority.HIGH)
   public void onColytraAnvil(AnvilUpdateEvent evt) {
 
-    if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
+    if (ColytraServerConfig.colytraMode != ColytraServerConfig.ColytraMode.NORMAL) {
       return;
     }
     ItemStack left = evt.getLeft();

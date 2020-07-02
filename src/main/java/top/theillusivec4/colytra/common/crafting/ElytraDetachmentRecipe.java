@@ -28,13 +28,13 @@ import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.ElytraNBT;
+import top.theillusivec4.colytra.server.ColytraServerConfig;
 
 public class ElytraDetachmentRecipe extends SpecialRecipe {
 
-  public static final SpecialRecipeSerializer<ElytraDetachmentRecipe> CRAFTING_DETACH_ELYTRA =
-      new SpecialRecipeSerializer<>(ElytraDetachmentRecipe::new);
+  public static final SpecialRecipeSerializer<ElytraDetachmentRecipe> CRAFTING_DETACH_ELYTRA = new SpecialRecipeSerializer<>(
+      ElytraDetachmentRecipe::new);
 
   public ElytraDetachmentRecipe(ResourceLocation id) {
     super(id);
@@ -43,7 +43,7 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
   @Override
   public boolean matches(@Nonnull CraftingInventory inv, @Nonnull World worldIn) {
 
-    if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
+    if (ColytraServerConfig.colytraMode != ColytraServerConfig.ColytraMode.NORMAL) {
       return false;
     }
     ItemStack itemstack = ItemStack.EMPTY;
@@ -90,8 +90,8 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
   @Nonnull
   @Override
   public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
-    NonNullList<ItemStack> nonnulllist =
-        NonNullList.withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+    NonNullList<ItemStack> nonnulllist = NonNullList
+        .withSize(inv.getSizeInventory(), ItemStack.EMPTY);
 
     for (int i = 0; i < nonnulllist.size(); ++i) {
       ItemStack currentStack = inv.getStackInSlot(i);

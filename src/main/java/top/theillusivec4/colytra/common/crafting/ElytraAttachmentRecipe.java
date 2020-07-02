@@ -29,6 +29,7 @@ import net.minecraft.entity.MobEntity;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ElytraItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
@@ -36,8 +37,8 @@ import net.minecraft.item.crafting.SpecialRecipeSerializer;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import top.theillusivec4.colytra.common.ColytraConfig;
 import top.theillusivec4.colytra.common.ElytraNBT;
+import top.theillusivec4.colytra.server.ColytraServerConfig;
 
 public class ElytraAttachmentRecipe extends SpecialRecipe {
 
@@ -137,7 +138,7 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
 
     if (!itemstack.isEmpty() && !elytra.isEmpty()) {
 
-      if (ColytraConfig.getColytraMode() != ColytraConfig.ColytraMode.NORMAL) {
+      if (ColytraServerConfig.colytraMode != ColytraServerConfig.ColytraMode.NORMAL) {
         mergeEnchantments(elytra, itemstack);
         itemstack.setRepairCost(elytra.getRepairCost() + itemstack.getRepairCost());
       }
@@ -160,16 +161,10 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
   }
 
   private static boolean isValid(ItemStack stack) {
-    ColytraConfig.PermissionMode permissionMode = ColytraConfig.getPermissionMode();
-    List<String> permissionList = ColytraConfig.getPermissionList();
-    ResourceLocation resourceLocation = stack.getItem().getRegistryName();
-
-    if (resourceLocation == null) {
-      return false;
-    }
-    String key = resourceLocation.toString();
-    boolean isBlacklist = permissionMode == ColytraConfig.PermissionMode.BLACKLIST;
-    return isBlacklist != permissionList.contains(key)
+    ColytraServerConfig.PermissionMode permissionMode = ColytraServerConfig.permissionMode;
+    List<Item> permissionList = ColytraServerConfig.permissionList;
+    boolean isBlacklist = permissionMode == ColytraServerConfig.PermissionMode.BLACKLIST;
+    return isBlacklist != permissionList.contains(stack.getItem())
         && MobEntity.getSlotForItemStack(stack) == EquipmentSlotType.CHEST && !(stack
         .getItem() instanceof ElytraItem);
   }
