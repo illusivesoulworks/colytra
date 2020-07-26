@@ -62,7 +62,7 @@ public class ElytraNBT {
           .ifPresent(energy -> energy.extractEnergy(ColytraServerConfig.energyUsage, false));
 
       if (!energyStorage.isPresent()) {
-        elytraStack.damageItem(amount, livingEntity,
+        chestStack.damageItem(amount, livingEntity,
             damager -> damager.sendBreakAnimation(EquipmentSlotType.CHEST));
       }
     }
