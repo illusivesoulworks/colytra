@@ -17,45 +17,46 @@
  * License along with Colytra.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package top.theillusivec4.colytra.common.crafting;
+package top.theillusivec4.colytra.core.crafting;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nonnull;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.MobEntity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ElytraItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.SpecialCraftingRecipe;
+import net.minecraft.recipe.SpecialRecipeSerializer;
+import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
-import top.theillusivec4.colytra.common.ElytraNBT;
-import top.theillusivec4.colytra.server.ColytraServerConfig;
+import top.theillusivec4.colytra.core.Colytra;
+import top.theillusivec4.colytra.core.base.ColytraConfig.ColytraMode;
+import top.theillusivec4.colytra.core.base.ColytraConfig.PermissionMode;
+import top.theillusivec4.colytra.core.util.ElytraTag;
 
-public class ElytraAttachmentRecipe extends SpecialRecipe {
+public class ElytraAttachmentRecipe extends SpecialCraftingRecipe {
 
   public static final SpecialRecipeSerializer<ElytraAttachmentRecipe> CRAFTING_ATTACH_ELYTRA = new SpecialRecipeSerializer<>(
       ElytraAttachmentRecipe::new);
 
-  public ElytraAttachmentRecipe(ResourceLocation id) {
+  public ElytraAttachmentRecipe(Identifier id) {
     super(id);
   }
 
   private static void mergeEnchantments(ItemStack source, ItemStack destination) {
-    Map<Enchantment, Integer> mapSource = EnchantmentHelper.getEnchantments(source);
-    Map<Enchantment, Integer> mapDestination = EnchantmentHelper.getEnchantments(destination);
+    Map<Enchantment, Integer> mapSource = EnchantmentHelper.get(source);
+    Map<Enchantment, Integer> mapDestination = EnchantmentHelper.get(destination);
 
     for (Enchantment enchantment : mapSource.keySet()) {
 
-      if (enchantment == null || !enchantment.canApply(destination)) {
+      if (enchantment == null || !enchantment.isAcceptableItem(destination)) {
         continue;
       }
       int destLevel = mapDestination.getOrDefault(enchantment, 0);
@@ -64,7 +65,7 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
 
       for (Enchantment destEnch : mapDestination.keySet()) {
 
-        if (enchantment != destEnch && !destEnch.isCompatibleWith(enchantment)) {
+        if (enchantment != destEnch && !destEnch.canCombine(enchantment)) {
           return;
         }
       }
@@ -74,17 +75,17 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
       }
       mapDestination.put(enchantment, srcLevel);
     }
-    EnchantmentHelper.setEnchantments(mapDestination, destination);
-    EnchantmentHelper.setEnchantments(new HashMap<>(), source);
+    EnchantmentHelper.set(mapDestination, destination);
+    EnchantmentHelper.set(new HashMap<>(), source);
   }
 
   @Override
-  public boolean matches(@Nonnull CraftingInventory inv, @Nonnull World worldIn) {
+  public boolean matches(CraftingInventory inv, World worldIn) {
     ItemStack itemstack = ItemStack.EMPTY;
     ItemStack elytra = ItemStack.EMPTY;
 
-    for (int i = 0; i < inv.getSizeInventory(); ++i) {
-      ItemStack currentStack = inv.getStackInSlot(i);
+    for (int i = 0; i < inv.size(); ++i) {
+      ItemStack currentStack = inv.getStack(i);
 
       if (currentStack.isEmpty()) {
         continue;
@@ -92,7 +93,7 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
 
       if (isValid(currentStack)) {
 
-        if (!itemstack.isEmpty() || ElytraNBT.hasUpgrade(currentStack)) {
+        if (!itemstack.isEmpty() || ElytraTag.hasUpgrade(currentStack)) {
           return false;
         }
         itemstack = currentStack;
@@ -107,14 +108,13 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
     return !itemstack.isEmpty() && !elytra.isEmpty();
   }
 
-  @Nonnull
   @Override
-  public ItemStack getCraftingResult(@Nonnull CraftingInventory inv) {
+  public ItemStack craft(CraftingInventory inv) {
     ItemStack itemstack = ItemStack.EMPTY;
     ItemStack elytra = ItemStack.EMPTY;
 
-    for (int k = 0; k < inv.getSizeInventory(); ++k) {
-      ItemStack currentStack = inv.getStackInSlot(k);
+    for (int k = 0; k < inv.size(); ++k) {
+      ItemStack currentStack = inv.getStack(k);
 
       if (currentStack.isEmpty()) {
         continue;
@@ -138,11 +138,11 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
 
     if (!itemstack.isEmpty() && !elytra.isEmpty()) {
 
-      if (ColytraServerConfig.colytraMode != ColytraServerConfig.ColytraMode.NORMAL) {
+      if (Colytra.getConfig().getColytraMode() != ColytraMode.NORMAL) {
         mergeEnchantments(elytra, itemstack);
         itemstack.setRepairCost(elytra.getRepairCost() + itemstack.getRepairCost());
       }
-      itemstack.getOrCreateTag().put(ElytraNBT.ELYTRA_TAG, elytra.write(new CompoundNBT()));
+      itemstack.getOrCreateTag().put(ElytraTag.ELYTRA_TAG, elytra.toTag(new CompoundTag()));
       return itemstack;
     } else {
       return ItemStack.EMPTY;
@@ -150,22 +150,21 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
   }
 
   @Override
-  public boolean canFit(int width, int height) {
+  public boolean fits(int width, int height) {
     return width * height >= 2;
   }
 
-  @Nonnull
   @Override
-  public IRecipeSerializer<?> getSerializer() {
+  public RecipeSerializer<?> getSerializer() {
     return CRAFTING_ATTACH_ELYTRA;
   }
 
   private static boolean isValid(ItemStack stack) {
-    ColytraServerConfig.PermissionMode permissionMode = ColytraServerConfig.permissionMode;
-    List<Item> permissionList = ColytraServerConfig.permissionList;
-    boolean isBlacklist = permissionMode == ColytraServerConfig.PermissionMode.BLACKLIST;
+    PermissionMode permissionMode = Colytra.getConfig().getPermissionMode();
+    List<Item> permissionList = Colytra.getConfig().getPermissionList();
+    boolean isBlacklist = permissionMode == PermissionMode.BLACKLIST;
     return isBlacklist != permissionList.contains(stack.getItem())
-        && MobEntity.getSlotForItemStack(stack) == EquipmentSlotType.CHEST && !(stack
+        && MobEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.CHEST && !(stack
         .getItem() instanceof ElytraItem);
   }
 }

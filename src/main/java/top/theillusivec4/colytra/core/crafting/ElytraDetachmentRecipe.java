@@ -17,45 +17,45 @@
  * License along with Colytra.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package top.theillusivec4.colytra.common.crafting;
+package top.theillusivec4.colytra.core.crafting;
 
-import javax.annotation.Nonnull;
 import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.item.crafting.SpecialRecipeSerializer;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.recipe.SpecialCraftingRecipe;
+import net.minecraft.recipe.SpecialRecipeSerializer;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
-import top.theillusivec4.colytra.common.ElytraNBT;
-import top.theillusivec4.colytra.server.ColytraServerConfig;
+import top.theillusivec4.colytra.core.Colytra;
+import top.theillusivec4.colytra.core.base.ColytraConfig.ColytraMode;
+import top.theillusivec4.colytra.core.util.ElytraTag;
 
-public class ElytraDetachmentRecipe extends SpecialRecipe {
+public class ElytraDetachmentRecipe extends SpecialCraftingRecipe {
 
   public static final SpecialRecipeSerializer<ElytraDetachmentRecipe> CRAFTING_DETACH_ELYTRA = new SpecialRecipeSerializer<>(
       ElytraDetachmentRecipe::new);
 
-  public ElytraDetachmentRecipe(ResourceLocation id) {
+  public ElytraDetachmentRecipe(Identifier id) {
     super(id);
   }
 
   @Override
-  public boolean matches(@Nonnull CraftingInventory inv, @Nonnull World worldIn) {
+  public boolean matches(CraftingInventory inv, World worldIn) {
 
-    if (ColytraServerConfig.colytraMode != ColytraServerConfig.ColytraMode.NORMAL) {
+    if (Colytra.getConfig().getColytraMode() != ColytraMode.NORMAL) {
       return false;
     }
     ItemStack itemstack = ItemStack.EMPTY;
 
-    for (int i = 0; i < inv.getSizeInventory(); ++i) {
-      ItemStack currentStack = inv.getStackInSlot(i);
+    for (int i = 0; i < inv.size(); ++i) {
+      ItemStack currentStack = inv.getStack(i);
 
       if (currentStack.isEmpty()) {
         continue;
       }
 
-      if (!itemstack.isEmpty() || !ElytraNBT.hasUpgrade(currentStack)) {
+      if (!itemstack.isEmpty() || !ElytraTag.hasUpgrade(currentStack)) {
         return false;
       }
       itemstack = currentStack;
@@ -63,20 +63,19 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
     return !itemstack.isEmpty();
   }
 
-  @Nonnull
   @Override
-  public ItemStack getCraftingResult(@Nonnull CraftingInventory inv) {
+  public ItemStack craft(CraftingInventory inv) {
     ItemStack itemstack = ItemStack.EMPTY;
 
-    for (int k = 0; k < inv.getSizeInventory(); ++k) {
-      ItemStack currentStack = inv.getStackInSlot(k);
+    for (int k = 0; k < inv.size(); ++k) {
+      ItemStack currentStack = inv.getStack(k);
 
       if (!currentStack.isEmpty()) {
 
         if (!itemstack.isEmpty()) {
           return ItemStack.EMPTY;
         }
-        itemstack = ElytraNBT.getElytra(currentStack);
+        itemstack = ElytraTag.getElytra(currentStack);
       }
     }
 
@@ -87,17 +86,15 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
     }
   }
 
-  @Nonnull
   @Override
-  public NonNullList<ItemStack> getRemainingItems(CraftingInventory inv) {
-    NonNullList<ItemStack> nonnulllist = NonNullList
-        .withSize(inv.getSizeInventory(), ItemStack.EMPTY);
+  public DefaultedList<ItemStack> getRemainingStacks(CraftingInventory inv) {
+    DefaultedList<ItemStack> nonnulllist = DefaultedList.ofSize(inv.size(), ItemStack.EMPTY);
 
     for (int i = 0; i < nonnulllist.size(); ++i) {
-      ItemStack currentStack = inv.getStackInSlot(i);
+      ItemStack currentStack = inv.getStack(i);
 
-      if (!currentStack.isEmpty() && ElytraNBT.hasUpgrade(currentStack)) {
-        currentStack.removeChildTag(ElytraNBT.ELYTRA_TAG);
+      if (!currentStack.isEmpty() && ElytraTag.hasUpgrade(currentStack)) {
+        currentStack.removeSubTag(ElytraTag.ELYTRA_TAG);
         nonnulllist.set(i, currentStack.copy());
         break;
       }
@@ -106,13 +103,12 @@ public class ElytraDetachmentRecipe extends SpecialRecipe {
   }
 
   @Override
-  public boolean canFit(int width, int height) {
+  public boolean fits(int width, int height) {
     return width * height >= 2;
   }
 
-  @Nonnull
   @Override
-  public IRecipeSerializer<?> getSerializer() {
+  public RecipeSerializer<?> getSerializer() {
     return CRAFTING_DETACH_ELYTRA;
   }
 }
