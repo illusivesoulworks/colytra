@@ -12,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.screen.AnvilScreenHandler;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import org.apache.commons.lang3.StringUtils;
@@ -29,6 +30,12 @@ public class MixinHooks {
   public static void syncConfig(PlayerEntity playerEntity) {
     ServerSidePacketRegistry.INSTANCE.sendToPlayer(playerEntity, NetworkPackets.SYNC_CONFIG,
         NetworkPackets.writeConfigPacket(new PacketByteBuf(Unpooled.buffer())));
+  }
+
+  public static void syncAllConfigs(MinecraftServer server) {
+    PacketByteBuf buf = NetworkPackets.writeConfigPacket(new PacketByteBuf(Unpooled.buffer()));
+    server.getPlayerManager().getPlayerList().forEach(player -> ServerSidePacketRegistry.INSTANCE
+        .sendToPlayer(player, NetworkPackets.SYNC_CONFIG, buf));
   }
 
   public static void updateColytra(PlayerEntity playerEntity) {

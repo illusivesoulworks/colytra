@@ -11,7 +11,8 @@
     "ForgingScreenHandlerAccessor",
     "LivingEntityAccessor",
     "PlayerEntityMixin",
-    "PlayerManagerMixin"
+    "PlayerManagerMixin",
+    "ReloadCommandMixin"
   ],
   "client": ["ItemStackMixin"],
   "server": [],
