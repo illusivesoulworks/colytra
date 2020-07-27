@@ -15,10 +15,13 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "top.theillusivec4.colytra.loader.ColytraMod"
+      "top.theillusivec4.colytra.loader.common.ColytraMod"
     ],
     "client": [
-      "top.theillusivec4.colytra.loader.ClientColytraMod"
+      "top.theillusivec4.colytra.loader.client.ClientColytraMod"
+    ],
+    "modmenu": [
+      "top.theillusivec4.colytra.loader.integration.ColytraModMenu"
     ]
   },
   "mixins": [

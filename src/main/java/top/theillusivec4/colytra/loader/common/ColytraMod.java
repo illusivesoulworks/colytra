@@ -14,8 +14,8 @@ public class ColytraMod implements ModInitializer {
 
   public static ConfigDataHolder config;
 
-  private static final String ATTACH_ELYTRA = "elytra_attachment";
-  private static final String DETACH_ELYTRA = "elytra_detachment";
+  private static final String ATTACH_ELYTRA = Colytra.MODID + ":elytra_attachment";
+  private static final String DETACH_ELYTRA = Colytra.MODID + ":elytra_detachment";
 
   @Override
   public void onInitialize() {
