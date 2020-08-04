@@ -27,6 +27,7 @@ import top.theillusivec4.colytra.core.Colytra;
 import top.theillusivec4.colytra.core.crafting.ElytraAttachmentRecipe;
 import top.theillusivec4.colytra.core.crafting.ElytraDetachmentRecipe;
 import top.theillusivec4.colytra.loader.common.impl.AccessorImpl;
+import top.theillusivec4.colytra.loader.common.impl.ColytraConfigImpl;
 import top.theillusivec4.colytra.loader.common.impl.RegistryFinderImpl;
 
 public class ColytraMod implements ModInitializer {
@@ -41,6 +42,7 @@ public class ColytraMod implements ModInitializer {
     config = AutoConfig.register(ConfigDataHolder.class, JanksonConfigSerializer::new).getConfig();
     Colytra.setAccessor(new AccessorImpl());
     Colytra.setRegistryFinder(new RegistryFinderImpl());
+    Colytra.setConfig(new ColytraConfigImpl(config));
     Registry.register(Registry.RECIPE_SERIALIZER, ATTACH_ELYTRA,
         ElytraAttachmentRecipe.CRAFTING_ATTACH_ELYTRA);
     Registry.register(Registry.RECIPE_SERIALIZER, DETACH_ELYTRA,

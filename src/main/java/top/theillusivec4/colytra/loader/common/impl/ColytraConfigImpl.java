@@ -19,15 +19,38 @@
 
 package top.theillusivec4.colytra.loader.common.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.item.Item;
+import net.minecraft.item.Items;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import top.theillusivec4.colytra.core.base.ColytraConfig;
+import top.theillusivec4.colytra.loader.common.ConfigDataHolder;
 
 public class ColytraConfigImpl implements ColytraConfig {
 
   private List<Item> permissionList;
   private PermissionMode permissionMode;
   private ColytraMode colytraMode;
+
+  public ColytraConfigImpl() {
+  }
+
+  public ColytraConfigImpl(ConfigDataHolder config) {
+    colytraMode = config.colytraMode;
+    permissionMode = config.permissionMode;
+    List<Item> items = new ArrayList<>();
+
+    for (String id : config.permissionList) {
+      Item item = Registry.ITEM.get(new Identifier(id));
+
+      if (item != Items.AIR) {
+        items.add(item);
+      }
+    }
+    permissionList = items;
+  }
 
   @Override
   public void setPermissionMode(PermissionMode mode) {

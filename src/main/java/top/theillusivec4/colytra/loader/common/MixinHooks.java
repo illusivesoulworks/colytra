@@ -39,6 +39,7 @@ import top.theillusivec4.colytra.core.Colytra;
 import top.theillusivec4.colytra.core.base.ColytraConfig.ColytraMode;
 import top.theillusivec4.colytra.core.util.ColytraHooks;
 import top.theillusivec4.colytra.core.util.ElytraTag;
+import top.theillusivec4.colytra.loader.common.impl.ColytraConfigImpl;
 import top.theillusivec4.colytra.loader.mixin.AnvilScreenHandlerAccessor;
 import top.theillusivec4.colytra.loader.mixin.ExperienceOrbEntityAccessor;
 import top.theillusivec4.colytra.loader.mixin.ForgingScreenHandlerAccessor;
@@ -52,6 +53,7 @@ public class MixinHooks {
   }
 
   public static void syncAllConfigs(MinecraftServer server) {
+    Colytra.setConfig(new ColytraConfigImpl(ColytraMod.config));
     PacketByteBuf buf = NetworkPackets.writeConfigPacket(new PacketByteBuf(Unpooled.buffer()));
     server.getPlayerManager().getPlayerList().forEach(player -> ServerSidePacketRegistry.INSTANCE
         .sendToPlayer(player, NetworkPackets.SYNC_CONFIG, buf));
