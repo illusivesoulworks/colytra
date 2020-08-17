@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 ## [1.1.0-1.16.2] - 2020.08.16
 ### Changed
 - Updated to Minecraft 1.16.2
+- Tooltips now display custom names when applicable
 
 ## [1.0.1-1.16.1] - 2020.08.04
 ### Fixed

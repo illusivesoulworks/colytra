@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.text.LiteralText;
+import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Formatting;
@@ -77,7 +78,17 @@ public class ColytraHooks {
       return;
     }
     tooltip.add(new LiteralText(""));
-    tooltip.add(new TranslatableText("item.minecraft.elytra").formatted(Formatting.AQUA));
+
+    if (elytraStack.hasCustomName()) {
+      Text display = elytraStack.getName();
+
+      if (display instanceof MutableText) {
+        ((MutableText) display).formatted(Formatting.AQUA, Formatting.ITALIC);
+      }
+      tooltip.add(display);
+    } else {
+      tooltip.add(new TranslatableText("item.minecraft.elytra").formatted(Formatting.AQUA));
+    }
 
     if (Colytra.getConfig().getColytraMode() == ColytraMode.NORMAL) {
 
