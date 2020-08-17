@@ -7,6 +7,7 @@ This project uses MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 ## [1.16.2-5.0.0.0] - 2020.08.16
 ### Changed
 - Updated to Minecraft 1.16.2
+- Tooltips now display custom names when applicable
 
 ## [4.0.0.1] - 2020.07.25
 ### Fixed

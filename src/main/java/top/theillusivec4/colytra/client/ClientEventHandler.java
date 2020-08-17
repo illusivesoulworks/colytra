@@ -26,6 +26,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.IFormattableTextComponent;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -50,8 +51,19 @@ public class ClientEventHandler {
       return;
     }
     tooltip.add(new StringTextComponent(""));
-    tooltip
-        .add(new TranslationTextComponent("item.minecraft.elytra").mergeStyle(TextFormatting.AQUA));
+
+    if (elytraStack.hasDisplayName()) {
+      ITextComponent display = elytraStack.getDisplayName();
+
+      if (display instanceof IFormattableTextComponent) {
+        ((IFormattableTextComponent) display).mergeStyle(TextFormatting.AQUA)
+            .mergeStyle(TextFormatting.ITALIC);
+      }
+      tooltip.add(display);
+    } else {
+      tooltip.add(
+          new TranslationTextComponent("item.minecraft.elytra").mergeStyle(TextFormatting.AQUA));
+    }
 
     if (ColytraServerConfig.colytraMode == ColytraServerConfig.ColytraMode.NORMAL) {
 
