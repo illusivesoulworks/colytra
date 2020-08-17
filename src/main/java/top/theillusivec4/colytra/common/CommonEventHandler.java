@@ -146,7 +146,7 @@ public class CommonEventHandler {
       attributeInstance.removeModifier(FLIGHT_MODIFIER);
 
       if (ElytraNBT.isUseable(stack, ElytraNBT.getElytra(stack))) {
-        attributeInstance.func_233767_b_(FLIGHT_MODIFIER);
+        attributeInstance.applyNonPersistentModifier(FLIGHT_MODIFIER);
 
         if (ColytraServerConfig.colytraMode != ColytraServerConfig.ColytraMode.PERFECT) {
           updateColytra(stack, player);

@@ -50,8 +50,8 @@ public class ClientEventHandler {
       return;
     }
     tooltip.add(new StringTextComponent(""));
-    tooltip.add(
-        new TranslationTextComponent("item.minecraft.elytra").func_240699_a_(TextFormatting.AQUA));
+    tooltip
+        .add(new TranslationTextComponent("item.minecraft.elytra").mergeStyle(TextFormatting.AQUA));
 
     if (ColytraServerConfig.colytraMode == ColytraServerConfig.ColytraMode.NORMAL) {
 
@@ -73,20 +73,20 @@ public class ClientEventHandler {
 
             if (enchantment != null) {
               tooltip.add(new StringTextComponent(" ")
-                  .func_230529_a_(enchantment.getDisplayName(nbttagcompound.getInt("lvl"))));
+                  .append(enchantment.getDisplayName(nbttagcompound.getInt("lvl"))));
             }
           }
         }
       }
 
       if (ElytraNBT.isUseable(chestStack, elytraStack)) {
-        tooltip.add(new StringTextComponent(" ").func_230529_a_(
-            new TranslationTextComponent("item.durability",
-                elytraStack.getMaxDamage() - elytraStack.getDamage(), elytraStack.getMaxDamage())));
+        tooltip.add(new StringTextComponent(" ").append(
+            (new TranslationTextComponent("item.durability",
+                elytraStack.getMaxDamage() - elytraStack.getDamage(),
+                elytraStack.getMaxDamage()))));
       } else {
-        tooltip.add(new StringTextComponent(" ").func_230529_a_(
-            new TranslationTextComponent("tooltip.colytra.broken")
-                .func_240699_a_(TextFormatting.RED)));
+        tooltip.add(new StringTextComponent(" ").append(
+            new TranslationTextComponent("tooltip.colytra.broken").mergeStyle(TextFormatting.RED)));
       }
     }
   }
