@@ -25,14 +25,25 @@ dependencies {
 
     modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
-    modImplementation "io.github.prospector:modmenu:${project.modmenu_version}"
     modImplementation "top.theillusivec4.caelus:caelus-fabric:${project.caelus_version}"
 
-    modApi "me.shedaniel.cloth:config-2:${project.cloth_version}"
+    modImplementation "me.shedaniel.cloth:config-2:${project.cloth_version}", {
+        exclude group: "net.fabricmc.fabric-api"
+    }
     include "me.shedaniel.cloth:config-2:${project.cloth_version}"
 
-    modApi "me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig_version}"
+    modImplementation "me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig_version}", {
+        exclude group: "net.fabricmc.fabric-api"
+    }
     include "me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig_version}"
+
+    modCompileOnly "io.github.prospector:modmenu:${project.modmenu_version}", {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+    modRuntime "io.github.prospector:modmenu:${project.modmenu_version}", {
+        exclude group: "net.fabricmc.fabric-api"
+    }
+    modRuntime fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
 }
 
 processResources {
