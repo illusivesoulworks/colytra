@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[33,)"
+loaderVersion="[34,)"
 license="LGPL-3.0-or-later"
 issueTrackerURL="https://github.com/TheIllusiveC4/Colytra/issues"
 logoFile="${mod_icon}"
@@ -15,18 +15,18 @@ ${mod_description}
 [[dependencies.colytra]]
     modId="forge"
     mandatory=true
-    versionRange="[33,)"
+    versionRange="[34,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.colytra]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.2,1.17)"
+    versionRange="[1.16.3,1.17)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.colytra]]
     modId="caelus"
     mandatory=true
-    versionRange="[1.16.2-2.0.0.0,)"
+    versionRange="[1.16.3-2.0.0.2,)"
     ordering="NONE"
     side="BOTH"
