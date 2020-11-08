@@ -1,9 +1,9 @@
 {
   "tooltip.colytra.broken": "Inutilisable",
   "gui.colytra.config.permissionMode": "Mode de permission",
-  "gui.colytra.config.permissionMode.tooltip": "Défini si la liste de permission est une blacklist ou une whitelist",
+  "gui.colytra.config.permissionMode.tooltip": "Défini si la liste de permission est une liste blanche ou noire",
   "gui.colytra.config.permissionList": "Liste de permission",
-  "gui.colytra.config.permissionList.tooltip": "Liste des objets par nom de registre à blacklister/whitelister selon le mode de permission",
+  "gui.colytra.config.permissionList.tooltip": "Liste des objets par nom de registre dans la liste blanche/noire selon le mode de permission",
   "gui.colytra.config.colytraMode": "Mode de Colytra",
   "gui.colytra.config.colytraMode.tooltip": "Défini le comportement des plastrons élytres\nNORMAL : Les élytres sont indépendantes du plastron et peuvent être séparées plus tard\nUNISON : Les élytres fusionneront avec le plastron et ne pourront plus être séparées\nPERFECT : Les élytres fusionneront avec le plastron et voler n'utilise pas de durabilité",
   "gui.colytra.config.energyUsage": "Consommation d'énergie",
