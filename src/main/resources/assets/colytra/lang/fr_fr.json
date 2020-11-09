@@ -2,7 +2,7 @@
   "tooltip.colytra.broken": "Inutilisable",
   "text.autoconfig.colytra.title": "Colytra",
   "text.autoconfig.colytra.option.permissionMode": "Mode de permission",
-  "text.autoconfig.colytra.option.permissionMode.@Tooltip[0]": "Défini si la liste de permission est une blacklist ou une whitelist",
+  "text.autoconfig.colytra.option.permissionMode.@Tooltip[0]": "Défini si la liste de permission est une liste blanche ou noire",
   "text.autoconfig.colytra.option.permissionMode.@Tooltip[1]": "BLACKLIST : Liste noire, les objets spécifiés ne peuvent pas être combinés avec des élytres",
   "text.autoconfig.colytra.option.permissionMode.@Tooltip[2]": "WHITELIST : Liste blanche, seulement les objets spécifiés peuvent être combinés avec des élytres",
   "text.autoconfig.colytra.option.permissionList": "Liste de permission",
