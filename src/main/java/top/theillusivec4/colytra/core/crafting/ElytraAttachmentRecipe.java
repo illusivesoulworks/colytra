@@ -30,10 +30,12 @@ import net.minecraft.inventory.CraftingInventory;
 import net.minecraft.item.ElytraItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.recipe.SpecialCraftingRecipe;
 import net.minecraft.recipe.SpecialRecipeSerializer;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 import top.theillusivec4.colytra.core.Colytra;
@@ -141,6 +143,13 @@ public class ElytraAttachmentRecipe extends SpecialCraftingRecipe {
       if (Colytra.getConfig().getColytraMode() != ColytraMode.NORMAL) {
         mergeEnchantments(elytra, itemstack);
         itemstack.setRepairCost(elytra.getRepairCost() + itemstack.getRepairCost());
+        Text name = elytra.getName();
+        boolean hasCustomName = elytra.hasCustomName();
+        elytra = new ItemStack(Items.ELYTRA);
+
+        if (hasCustomName) {
+          elytra.setCustomName(name);
+        }
       }
       itemstack.getOrCreateTag().put(ElytraTag.ELYTRA_TAG, elytra.toTag(new CompoundTag()));
       return itemstack;
