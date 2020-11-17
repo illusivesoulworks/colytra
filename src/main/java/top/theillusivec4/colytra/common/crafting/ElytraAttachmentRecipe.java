@@ -31,6 +31,7 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ElytraItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.item.crafting.IRecipeSerializer;
 import net.minecraft.item.crafting.SpecialRecipe;
 import net.minecraft.item.crafting.SpecialRecipeSerializer;
@@ -141,6 +142,7 @@ public class ElytraAttachmentRecipe extends SpecialRecipe {
       if (ColytraServerConfig.colytraMode != ColytraServerConfig.ColytraMode.NORMAL) {
         mergeEnchantments(elytra, itemstack);
         itemstack.setRepairCost(elytra.getRepairCost() + itemstack.getRepairCost());
+        elytra = new ItemStack(Items.ELYTRA);
       }
       itemstack.getOrCreateTag().put(ElytraNBT.ELYTRA_TAG, elytra.write(new CompoundNBT()));
       return itemstack;
