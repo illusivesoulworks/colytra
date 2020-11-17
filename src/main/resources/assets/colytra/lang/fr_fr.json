@@ -1,0 +1,15 @@
+{
+  "tooltip.colytra.broken": "Inutilisable",
+  "text.autoconfig.colytra.title": "Colytra",
+  "text.autoconfig.colytra.option.permissionMode": "Mode de permission",
+  "text.autoconfig.colytra.option.permissionMode.@Tooltip[0]": "Défini si la liste de permission est une liste blanche ou noire",
+  "text.autoconfig.colytra.option.permissionMode.@Tooltip[1]": "BLACKLIST : Liste noire, les objets spécifiés ne peuvent pas être combinés avec des élytres",
+  "text.autoconfig.colytra.option.permissionMode.@Tooltip[2]": "WHITELIST : Liste blanche, seulement les objets spécifiés peuvent être combinés avec des élytres",
+  "text.autoconfig.colytra.option.permissionList": "Liste de permission",
+  "text.autoconfig.colytra.option.permissionList.@Tooltip": "Liste des objets par nom de registre dans la liste blanche/noire selon le mode de permission",
+  "text.autoconfig.colytra.option.colytraMode": "Mode de Colytra",
+  "text.autoconfig.colytra.option.colytraMode.@Tooltip[0]": "Défini le comportement des plastrons élytres",
+  "text.autoconfig.colytra.option.colytraMode.@Tooltip[1]": "NORMAL : Les élytres sont indépendantes du plastron et peuvent être séparées plus tard",
+  "text.autoconfig.colytra.option.colytraMode.@Tooltip[2]": "UNISON : Les élytres fusionnent avec le plastron et ne peuvent plus être séparées",
+  "text.autoconfig.colytra.option.colytraMode.@Tooltip[3]": "PERFECT : Les élytres fusionnent avec le plastron et voler n'utilise pas de durabilité"
+}
