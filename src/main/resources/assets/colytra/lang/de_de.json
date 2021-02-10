@@ -1,0 +1,11 @@
+{
+  "tooltip.colytra.broken": "Unbenutzbar",
+  "gui.colytra.config.permissionMode": "Zugriffsmodus",
+  "gui.colytra.config.permissionMode.tooltip": "Legt fest, ob die Berechtigungsliste eine vorbotene oder eine erlaubte Liste ist",
+  "gui.colytra.config.permissionList": "Zugriffsliste",
+  "gui.colytra.config.permissionList.tooltip": "Liste der Elemente nach Registrierungsnamen, die basierend auf dem Zugriffsmodus auf die verbotene/erlaubte Liste gesetzt werden sollen",
+  "gui.colytra.config.colytraMode": "Colytramodus",
+  "gui.colytra.config.colytraMode.tooltip": "Legt fest, wie sich die Elytren-Braustplatten verhalten sollen\nNORMAL: Die Elytren existieren separat von der Brustplatte und können später getrennt werden\nPERFEKT: Die Elytren verschmelzen vollständig mit der Brustplatte und das Fliegen verwendet keine Haltbarkeit",
+  "gui.colytra.config.energyUsage": "Energieverbrauch",
+  "gui.colytra.config.energyUsage.tooltip": "Wie viel Energie der Elytrenflug pro Sekunde verbraucht, wenn der Unisono-Modus aktiv ist und die Brustplatte Energie verbraucht"
+}
