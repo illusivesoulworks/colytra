@@ -35,7 +35,9 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.caelus.api.RenderElytraEvent;
+import top.theillusivec4.colytra.Colytra;
 import top.theillusivec4.colytra.common.ElytraNBT;
+import top.theillusivec4.colytra.integration.AetherIntegration;
 import top.theillusivec4.colytra.server.ColytraServerConfig;
 
 public class ClientEventHandler {
@@ -85,19 +87,19 @@ public class ClientEventHandler {
 
             if (enchantment != null) {
               tooltip.add(new StringTextComponent(" ")
-                  .append(enchantment.getDisplayName(nbttagcompound.getInt("lvl"))));
+                  .appendSibling(enchantment.getDisplayName(nbttagcompound.getInt("lvl"))));
             }
           }
         }
       }
 
       if (ElytraNBT.isUseable(chestStack, elytraStack)) {
-        tooltip.add(new StringTextComponent(" ").append(
+        tooltip.add(new StringTextComponent(" ").appendSibling(
             (new TranslationTextComponent("item.durability",
                 elytraStack.getMaxDamage() - elytraStack.getDamage(),
                 elytraStack.getMaxDamage()))));
       } else {
-        tooltip.add(new StringTextComponent(" ").append(
+        tooltip.add(new StringTextComponent(" ").appendSibling(
             new TranslationTextComponent("tooltip.colytra.broken").mergeStyle(TextFormatting.RED)));
       }
     }
@@ -117,6 +119,10 @@ public class ClientEventHandler {
 
     if (!elytraStack.isEmpty()) {
       evt.setRender(true);
+
+      if (Colytra.isAetherLoaded) {
+        AetherIntegration.checkCape(evt);
+      }
 
       if (elytraStack.isEnchanted()) {
         evt.setEnchanted(true);
