@@ -25,6 +25,7 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
+            jvmArg "-Dmixin.env.disableRefMap=true"
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
@@ -38,6 +39,7 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
+            jvmArg "-Dmixin.env.disableRefMap=true"
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
@@ -55,11 +57,17 @@ repositories {
     maven {
         url = "https://maven.theillusivec4.top/"
     }
+    flatDir {
+        dirs 'libs'
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${version_forge}"
     compile fg.deobf("top.theillusivec4.caelus:caelus-forge:${version_caelus}")
+
+    compileOnly fileTree(dir: 'libs', include: '*.jar')
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${version_curios}:api")
 }
 
 sourceSets {
