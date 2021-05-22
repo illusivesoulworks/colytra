@@ -76,6 +76,7 @@ public class CommonEventHandler {
       if (i <= 0) return; // no mending happens
       xpOrb.xpValue -= durabilityToXp(i);
       elytraStack.setDamage(elytraStack.getDamage() - i);
+      ElytraNBT.setElytra(chestStack, elytraStack); // write back NBT
 
       if (xpOrb.xpValue > 0) {
         player.giveExperiencePoints(xpOrb.xpValue);
