@@ -15,21 +15,21 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "top.theillusivec4.colytra.loader.common.ColytraMod"
+      "top.theillusivec4.colytra.common.ColytraMod"
     ],
     "client": [
-      "top.theillusivec4.colytra.loader.client.ClientColytraMod"
+      "top.theillusivec4.colytra.client.ColytraClientMod"
     ],
     "modmenu": [
-      "top.theillusivec4.colytra.loader.integration.ColytraModMenu"
+      "top.theillusivec4.colytra.common.integration.ColytraModMenu"
     ]
   },
   "mixins": [
     "colytra.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.7.4",
-    "minecraft": "1.16.x",
+    "fabricloader": ">=0.11.3",
+    "minecraft": "1.17.x",
     "fabric": "*"
   }
 }

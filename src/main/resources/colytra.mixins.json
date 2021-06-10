@@ -1,20 +1,21 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "top.theillusivec4.colytra.loader.mixin",
-  "compatibilityLevel": "JAVA_8",
+  "package": "top.theillusivec4.colytra.mixin",
+  "compatibilityLevel": "JAVA_16",
   "mixins": [
-    "AnvilScreenHandlerAccessor",
-    "AnvilScreenHandlerMixin",
-    "ExperienceOrbEntityAccessor",
-    "ExperienceOrbEntityMixin",
-    "ForgingScreenHandlerAccessor",
-    "LivingEntityAccessor",
-    "PlayerEntityMixin",
-    "PlayerManagerMixin",
-    "ReloadCommandMixin"
+    "AccessorAnvilScreenHandler",
+    "AccessorExperienceOrbEntity",
+    "AccessorForgingScreenHandler",
+    "AccessorLivingEntity",
+    "MixinAnvilScreenHandler",
+    "MixinExperienceOrbEntity",
+    "MixinPlayerEntity",
+    "MixinPlayerManager"
   ],
-  "client": ["ItemStackMixin"],
+  "client": [
+    "MixinItemStack"
+  ],
   "server": [],
   "injectors": {
     "defaultRequire": 1
