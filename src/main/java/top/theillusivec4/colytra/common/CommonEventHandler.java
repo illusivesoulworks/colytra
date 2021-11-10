@@ -60,7 +60,7 @@ public class CommonEventHandler {
   }
 
   private static void handleColytraMending(ItemStack chestStack, PlayerXpEvent.PickupXp evt,
-      PlayerEntity player) {
+                                           PlayerEntity player) {
     ItemStack elytraStack = ElytraNBT.getElytra(chestStack);
 
     if (elytraStack.isEmpty() || elytraStack.getDamage() <= 0
@@ -70,20 +70,22 @@ public class CommonEventHandler {
     ExperienceOrbEntity xpOrb = evt.getOrb();
 
     if (xpOrb.delayBeforeCanPickup == 0 && player.xpCooldown == 0) {
+      int i = Math.min(xpToDurability(xpOrb.xpValue), elytraStack.getDamage());
+
+      if (i <= 0) {
+        return;
+      }
+      evt.setCanceled(true);
       player.xpCooldown = 2;
       player.onItemPickup(xpOrb, 1);
-      int i = Math.min(xpToDurability(xpOrb.xpValue), elytraStack.getDamage());
-      if (i <= 0) return; // no mending happens
       xpOrb.xpValue -= durabilityToXp(i);
       elytraStack.setDamage(elytraStack.getDamage() - i);
-      ElytraNBT.setElytra(chestStack, elytraStack); // write back NBT
+      ElytraNBT.setElytra(chestStack, elytraStack);
 
       if (xpOrb.xpValue > 0) {
         player.giveExperiencePoints(xpOrb.xpValue);
       }
-
       xpOrb.remove();
-      evt.setCanceled(true); // only cancel when mending happens
     }
   }
 
@@ -124,7 +126,7 @@ public class CommonEventHandler {
     int xpCost = membraneToUse + chestStack.getRepairCost() + right.getRepairCost();
     String name = evt.getName();
 
-    if (!name.isEmpty() && !name.equals(chestStack.getDisplayName().getString())) {
+    if (name != null && !name.isEmpty() && !name.equals(chestStack.getDisplayName().getString())) {
       output.setDisplayName(new StringTextComponent(name));
       xpCost++;
     }
