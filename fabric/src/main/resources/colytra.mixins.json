@@ -2,15 +2,13 @@
   "required": true,
   "minVersion": "0.8",
   "package": "top.theillusivec4.colytra.mixin",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
     "AccessorAnvilScreenHandler",
     "AccessorExperienceOrbEntity",
     "AccessorForgingScreenHandler",
-    "AccessorLivingEntity",
     "MixinAnvilScreenHandler",
     "MixinExperienceOrbEntity",
-    "MixinPlayerEntity",
     "MixinPlayerManager"
   ],
   "client": [

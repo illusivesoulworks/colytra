@@ -32,16 +32,16 @@ public class ColytraNbt {
   public static final String ELYTRA_TAG = ColytraMod.MOD_ID + ":ElytraUpgrade";
 
   public static boolean hasUpgrade(ItemStack stack) {
-    return stack.getSubTag(ELYTRA_TAG) != null;
+    return stack.getSubNbt(ELYTRA_TAG) != null;
   }
 
   public static ItemStack getElytra(ItemStack stack) {
-    NbtCompound tag = stack.getSubTag(ELYTRA_TAG);
+    NbtCompound tag = stack.getSubNbt(ELYTRA_TAG);
     return tag != null ? ItemStack.fromNbt(tag) : ItemStack.EMPTY;
   }
 
   public static void setElytra(ItemStack chestStack, ItemStack elytraStack) {
-    chestStack.getOrCreateTag().put(ELYTRA_TAG, elytraStack.writeNbt(new NbtCompound()));
+    chestStack.getOrCreateNbt().put(ELYTRA_TAG, elytraStack.writeNbt(new NbtCompound()));
   }
 
   public static void damageElytra(LivingEntity livingEntity, ItemStack chestStack,

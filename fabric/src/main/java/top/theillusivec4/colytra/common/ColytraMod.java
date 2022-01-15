@@ -20,12 +20,14 @@
 package top.theillusivec4.colytra.common;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.registry.Registry;
 import top.theillusivec4.colytra.common.crafting.ElytraAttachmentRecipe;
 import top.theillusivec4.colytra.common.crafting.ElytraDetachmentRecipe;
 import top.theillusivec4.colytra.common.config.AutoConfigPlugin;
+import top.theillusivec4.colytra.common.util.ColytraHooks;
 
 public class ColytraMod implements ModInitializer {
 
@@ -42,6 +44,7 @@ public class ColytraMod implements ModInitializer {
         ElytraAttachmentRecipe.CRAFTING_ATTACH_ELYTRA);
     Registry.register(Registry.RECIPE_SERIALIZER, DETACH_ELYTRA,
         ElytraDetachmentRecipe.CRAFTING_DETACH_ELYTRA);
+    EntityElytraEvents.CUSTOM.register(ColytraHooks::updateColytra);
 
     // Config
     isConfigLoaded = FabricLoader.getInstance().isModLoaded("cloth-config2");

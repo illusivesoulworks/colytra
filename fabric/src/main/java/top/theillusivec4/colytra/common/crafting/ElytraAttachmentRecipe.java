@@ -150,7 +150,7 @@ public class ElytraAttachmentRecipe extends SpecialCraftingRecipe {
           elytra.setCustomName(name);
         }
       }
-      itemstack.getOrCreateTag().put(ColytraNbt.ELYTRA_TAG, elytra.writeNbt(new NbtCompound()));
+      itemstack.getOrCreateNbt().put(ColytraNbt.ELYTRA_TAG, elytra.writeNbt(new NbtCompound()));
       return itemstack;
     } else {
       return ItemStack.EMPTY;

@@ -93,7 +93,7 @@ public class ElytraDetachmentRecipe extends SpecialCraftingRecipe {
       ItemStack currentStack = inv.getStack(i);
 
       if (!currentStack.isEmpty() && ColytraNbt.hasUpgrade(currentStack)) {
-        currentStack.removeSubTag(ColytraNbt.ELYTRA_TAG);
+        currentStack.removeSubNbt(ColytraNbt.ELYTRA_TAG);
         nonnulllist.set(i, currentStack.copy());
         break;
       }

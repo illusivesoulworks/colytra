@@ -54,10 +54,6 @@ public class MixinHooks {
         .forEach(player -> ServerPlayNetworking.send(player, ColytraPackets.SYNC_CONFIG, buf));
   }
 
-  public static void updateColytra(PlayerEntity playerEntity) {
-    ColytraHooks.updateColytra(playerEntity);
-  }
-
   public static void appendColytraTooltip(ItemStack stack, List<Text> tooltip) {
     ColytraHooks.appendColytraTooltip(stack, tooltip);
   }

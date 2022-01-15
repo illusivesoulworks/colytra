@@ -20,11 +20,8 @@
 package top.theillusivec4.colytra.common.util;
 
 import java.util.List;
-import java.util.UUID;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.attribute.EntityAttributeInstance;
-import net.minecraft.entity.attribute.EntityAttributeModifier;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
@@ -36,44 +33,32 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.event.GameEvent;
-import top.theillusivec4.caelus.api.CaelusApi;
 import top.theillusivec4.colytra.common.config.ColytraConfig;
-import top.theillusivec4.colytra.mixin.AccessorLivingEntity;
 
 public class ColytraHooks {
 
-  public static final EntityAttributeModifier FLIGHT_MODIFIER = new EntityAttributeModifier(
-      UUID.fromString("668bdbee-32b6-4c4b-bf6a-5a30f4d02e37"), "Flight modifier", 1.0d,
-      EntityAttributeModifier.Operation.ADDITION);
+  public static boolean updateColytra(LivingEntity entity, boolean tickElytra) {
+    ItemStack stack = entity.getEquippedStack(EquipmentSlot.CHEST);
+    ItemStack elytraStack = ColytraNbt.getElytra(stack);
 
-  public static void updateColytra(PlayerEntity playerEntity) {
-    ItemStack stack = playerEntity.getEquippedStack(EquipmentSlot.CHEST);
-    EntityAttributeInstance attributeInstance = playerEntity
-        .getAttributeInstance(CaelusApi.getInstance().getFlightAttribute());
+    if (!elytraStack.isEmpty() && ColytraNbt.isUseable(stack, elytraStack)) {
 
-    if (attributeInstance != null) {
-      attributeInstance.removeModifier(FLIGHT_MODIFIER);
+      if (ColytraConfig.colytraMode != ColytraConfig.ColytraMode.PERFECT && tickElytra) {
+        int roll = entity.getRoll();
+        int i = roll + 1;
 
-      if (ColytraNbt.isUseable(stack, ColytraNbt.getElytra(stack))) {
-        attributeInstance.addTemporaryModifier(FLIGHT_MODIFIER);
+        if (!entity.world.isClient() && i % 10 == 0) {
+          int j = i / 10;
 
-        if (ColytraConfig.colytraMode != ColytraConfig.ColytraMode.PERFECT) {
-          ItemStack elytraStack = ColytraNbt.getElytra(stack);
-          int roll = ((AccessorLivingEntity) playerEntity).getRoll();
-          int i = roll + 1;
-
-          if (!playerEntity.world.isClient() && i % 10 == 0) {
-            int j = i / 10;
-
-            if (j % 2 == 0) {
-              ColytraNbt.damageElytra(playerEntity, stack, elytraStack, 1);
-            }
-            playerEntity.emitGameEvent(GameEvent.ELYTRA_FREE_FALL);
+          if (j % 2 == 0) {
+            ColytraNbt.damageElytra(entity, stack, elytraStack, 1);
           }
-
+          entity.emitGameEvent(GameEvent.ELYTRA_FREE_FALL);
         }
       }
+      return true;
     }
+    return false;
   }
 
   public static void appendColytraTooltip(ItemStack chestStack, List<Text> tooltip) {
@@ -101,9 +86,9 @@ public class ColytraHooks {
 
     if (ColytraConfig.colytraMode == ColytraConfig.ColytraMode.NORMAL) {
 
-      if (elytraStack.hasTag()) {
+      if (elytraStack.hasNbt()) {
         int i = 0;
-        NbtCompound tag = elytraStack.getTag();
+        NbtCompound tag = elytraStack.getNbt();
 
         if (tag != null && tag.contains("HideFlags", 99)) {
           i = tag.getInt("HideFlags");

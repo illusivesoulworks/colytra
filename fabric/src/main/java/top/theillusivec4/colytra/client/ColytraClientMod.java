@@ -20,7 +20,7 @@
 package top.theillusivec4.colytra.client;
 
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.rendereregistry.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
 import top.theillusivec4.colytra.common.network.ColytraClientNetwork;
 
 public class ColytraClientMod implements ClientModInitializer {
