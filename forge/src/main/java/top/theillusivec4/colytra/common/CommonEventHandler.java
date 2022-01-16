@@ -23,7 +23,6 @@ import java.util.UUID;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ExperienceOrb;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
@@ -38,7 +37,6 @@ import net.minecraftforge.event.entity.player.PlayerXpEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import top.theillusivec4.caelus.api.CaelusApi;
 import top.theillusivec4.colytra.server.ColytraServerConfig;
 
@@ -50,10 +48,9 @@ public class CommonEventHandler {
 
   private static void updateColytra(ItemStack chestStack, Player player) {
     ItemStack elytraStack = ElytraTag.getElytra(chestStack);
-    Integer ticksFlying = ObfuscationReflectionHelper
-        .getPrivateValue(LivingEntity.class, player, "fallFlyTicks");
+    int fallFlyTicks = player.getFallFlyingTicks();
 
-    if (ticksFlying == null || (ticksFlying + 1) % 20 != 0) {
+    if ((fallFlyTicks + 1) % 20 != 0) {
       return;
     }
     ElytraTag.damageElytra(player, chestStack, elytraStack, 1);
