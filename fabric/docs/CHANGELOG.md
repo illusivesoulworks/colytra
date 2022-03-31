@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [2.1.1-1.18.1] - 2022.03.30
+### Fixed
+- Fixed capes being rendered while wearing an attached elytra [#56](https://github.com/TheIllusiveC4/Colytra/issues/56)
+
 ## [2.1.0-1.18.1] - 2022.01.15
 ### Changed
 - Updated to Minecraft 1.18.1

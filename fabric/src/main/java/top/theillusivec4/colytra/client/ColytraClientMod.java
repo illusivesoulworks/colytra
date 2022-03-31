@@ -20,8 +20,11 @@
 package top.theillusivec4.colytra.client;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRenderEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.LivingEntityFeatureRendererRegistrationCallback;
+import net.minecraft.entity.EquipmentSlot;
 import top.theillusivec4.colytra.common.network.ColytraClientNetwork;
+import top.theillusivec4.colytra.common.util.ColytraNbt;
 
 public class ColytraClientMod implements ClientModInitializer {
 
@@ -31,5 +34,7 @@ public class ColytraClientMod implements ClientModInitializer {
     LivingEntityFeatureRendererRegistrationCallback.EVENT
         .register((entityType, entityRenderer, registrationHelper, context) -> registrationHelper
             .register(new ColytraFeatureRenderer<>(entityRenderer, context.getModelLoader())));
+    LivingEntityFeatureRenderEvents.ALLOW_CAPE_RENDER.register(
+        player -> !ColytraNbt.hasUpgrade(player.getEquippedStack(EquipmentSlot.CHEST)));
   }
 }
