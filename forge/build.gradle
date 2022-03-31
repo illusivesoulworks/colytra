@@ -61,11 +61,15 @@ repositories {
     maven {
         url = "https://maven.theillusivec4.top/"
     }
+    maven {
+        url = "https://www.cursemaven.com/"
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
     implementation fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}")
+    implementation fg.deobf("curse.maven:cyclic-239286:3640911")
 }
 
 def replaceResources = tasks.register("replaceResources", Copy) {

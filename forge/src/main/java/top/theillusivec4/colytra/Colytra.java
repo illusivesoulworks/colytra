@@ -24,6 +24,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -38,6 +39,8 @@ import top.theillusivec4.colytra.client.ColytraClientMod;
 import top.theillusivec4.colytra.common.CommonEventHandler;
 import top.theillusivec4.colytra.common.crafting.ElytraAttachmentRecipe;
 import top.theillusivec4.colytra.common.crafting.ElytraDetachmentRecipe;
+import top.theillusivec4.colytra.common.integration.CyclicClientPlugin;
+import top.theillusivec4.colytra.common.integration.CyclicPlugin;
 import top.theillusivec4.colytra.server.ColytraServerConfig;
 
 @Mod(Colytra.MOD_ID)
@@ -59,10 +62,18 @@ public class Colytra {
 
   private void setup(final FMLCommonSetupEvent evt) {
     MinecraftForge.EVENT_BUS.register(new CommonEventHandler());
+
+    if (ModList.get().isLoaded("cyclic")) {
+      CyclicPlugin.setup();
+    }
   }
 
   private void clientSetup(final FMLClientSetupEvent evt) {
     ColytraClientMod.setup();
+
+    if (ModList.get().isLoaded("cyclic")) {
+      CyclicClientPlugin.setup();
+    }
   }
 
   private void config(final ModConfigEvent evt) {
