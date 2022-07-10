@@ -13,8 +13,8 @@ Please reproduce all issues without any other unnecessary mods before submitting
 -->
 #### Versions (Be specific, do not write "latest"):
 * Colytra:
-* Caelus (for 1.13+):
-* Forge:
+* Caelus (for Forge):
+* Forge/Fabric:
 #### Observed Behavior:
 #### Expected Behavior:
 #### Steps to Reproduce:

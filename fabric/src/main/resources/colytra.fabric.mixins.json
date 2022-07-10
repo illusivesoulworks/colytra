@@ -1,0 +1,16 @@
+{
+    "required": true,
+    "minVersion": "0.8",
+    "package": "com.illusivesoulworks.colytra.mixin",
+    "compatibilityLevel": "JAVA_17",
+    "mixins": [
+      "MixinAnvilMenu",
+      "MixinExperienceOrb"
+    ],
+    "client": [
+    ],
+    "injectors": {
+      "defaultRequire": 1
+    }
+  }
+  

@@ -1,35 +1,33 @@
 {
   "schemaVersion": 1,
-  "id": "colytra",
+  "id": "${mod_id}",
   "version": "${version}",
-  "name": "Colytra",
-  "description": "Allows attachment of elytras to chestplates. ",
-  "authors": ["C4"],
+  "name": "${mod_name}",
+  "description": "${mod_description}",
+  "authors": [
+    "${mod_author}"
+  ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/colytra-fabric",
-    "sources": "https://github.com/TheIllusiveC4/Colytra",
-    "issues": "https://github.com/TheIllusiveC4/Colytra/issues"
+    "issues": "${issue_tracker}"
   },
-  "license": "LGPL-3.0-or-later",
-  "icon": "assets/colytra/colytra_icon.png",
+  "license": "${license}",
+  "icon": "${mod_id}_icon.png",
   "environment": "*",
   "entrypoints": {
     "main": [
-      "top.theillusivec4.colytra.common.ColytraMod"
+      "com.illusivesoulworks.colytra.ColytraFabricMod"
     ],
     "client": [
-      "top.theillusivec4.colytra.client.ColytraClientMod"
-    ],
-    "modmenu": [
-      "top.theillusivec4.colytra.common.integration.ColytraModMenu"
+      "com.illusivesoulworks.colytra.ColytraFabricClientMod"
     ]
   },
   "mixins": [
-    "colytra.mixins.json"
+    "colytra.fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.11.3",
-    "minecraft": "1.18.x",
-    "fabric": ">=0.44.0"
+    "fabricloader": ">=0.14",
+    "fabric": "*",
+    "minecraft": "${fabric_mc_version_range}",
+    "java": ">=17"
   }
 }
