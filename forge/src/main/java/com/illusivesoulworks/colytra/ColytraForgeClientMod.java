@@ -62,7 +62,7 @@ public class ColytraForgeClientMod {
 
   private static void onRenderCape(final RenderCapeEvent evt) {
 
-    if (!ElytraTag.getElytra(evt.getPlayer().getItemBySlot(EquipmentSlot.CHEST)).isEmpty()) {
+    if (!ElytraTag.getElytra(evt.getEntity().getItemBySlot(EquipmentSlot.CHEST)).isEmpty()) {
       evt.setCanceled(true);
     }
   }

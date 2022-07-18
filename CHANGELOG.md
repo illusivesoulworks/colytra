@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 6.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [6.0.0-beta.2+1.19] - 2022.07.17
+### Changed
+- [Forge] Updated to and requires Forge 41.0.94 or above
+- Updated to SpectreLib 0.8.1+1.19
+- Configuration file has been relocated to the `config` folder
+- Configuration file in the `defaultconfigs` folder will be copied to the `config` folder upon initialization
+- Local configuration file has been relocated to the `localconfigs` folder in the game directory
+
 ## [6.0.0-beta.1+1.19] - 2022.07.07
 ### Changed
 - Merged Forge and Fabric versions of the project together using the [MultiLoader template](https://github.com/jaredlll08/MultiLoader-Template)

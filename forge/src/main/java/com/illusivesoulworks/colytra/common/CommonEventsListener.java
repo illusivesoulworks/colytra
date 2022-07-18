@@ -73,7 +73,7 @@ public class CommonEventsListener {
   public void onPlayerXPPickUp(final PlayerXpEvent.PickupXp evt) {
     ExperienceOrb orb = evt.getOrb();
 
-    if (CommonEvents.repairColytraWithXp(orb, evt.getPlayer(), (val) -> orb.value = val)) {
+    if (CommonEvents.repairColytraWithXp(orb, evt.getEntity(), (val) -> orb.value = val)) {
       evt.setCanceled(true);
     }
   }
