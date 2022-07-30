@@ -2,10 +2,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/colytra/blob/1.19.x/CHANGELOG.md).
 
-## [6.0.0-beta.2+1.19] - 2022.07.17
+## [6.0.0+1.19.1] - 2022.07.30
 ### Changed
-- [Forge] Updated to and requires Forge 41.0.94 or above
-- Updated to SpectreLib 0.8.1+1.19
-- Configuration file has been relocated to the `config` folder
-- Configuration file in the `defaultconfigs` folder will be copied to the `config` folder upon initialization
-- Local configuration file has been relocated to the `localconfigs` folder in the game directory
+- Updated to Minecraft 1.19.1
+- [Forge] Updated to Forge 42+
+- [Forge] Updated to Caelus 1.19.1-3.0.0.4+
+- [Fabric] Updated to Fabric API 0.58.5+
