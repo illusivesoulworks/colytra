@@ -4,9 +4,9 @@ import com.lothrazar.cyclic.data.Const;
 import com.lothrazar.cyclic.net.PacketPlayerFalldamage;
 import com.lothrazar.cyclic.registry.EnchantRegistry;
 import com.lothrazar.cyclic.registry.PacketRegistry;
-import com.lothrazar.cyclic.util.UtilEntity;
-import com.lothrazar.cyclic.util.UtilNBT;
-import com.lothrazar.cyclic.util.UtilParticle;
+import com.lothrazar.cyclic.util.EntityUtil;
+import com.lothrazar.cyclic.util.ParticleUtil;
+import com.lothrazar.cyclic.util.TagDataUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -63,19 +63,19 @@ public class CyclicClientPlugin {
       player.fallDistance = 0;
       float angle = (player.getDeltaMovement().x == 0 && player.getDeltaMovement().z == 0) ? 90 :
           ROTATIONPITCH;
-      UtilEntity.launch(player, angle, POWER);
-      UtilParticle.spawnParticle(player.getCommandSenderWorld(), ParticleTypes.CRIT,
+      EntityUtil.launch(player, angle, POWER);
+      ParticleUtil.spawnParticle(player.getCommandSenderWorld(), ParticleTypes.CRIT,
           player.blockPosition(), 7);
       uses++;
 
       if (uses >= level) {
 
         if (!chest.isEmpty()) {
-          UtilEntity.setCooldownItem(player, chest.getItem(), COOLDOWN);
+          EntityUtil.setCooldownItem(player, chest.getItem(), COOLDOWN);
         }
         uses = 0;
       }
-      UtilNBT.setItemStackNBTVal(feet, CyclicPlugin.NBT_USES, uses);
+      TagDataUtil.setItemStackNBTVal(feet, CyclicPlugin.NBT_USES, uses);
       player.fallDistance = 0;
       PacketRegistry.INSTANCE.sendToServer(new PacketPlayerFalldamage());
     }

@@ -6,6 +6,10 @@ This project uses MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
 ## [1.18.1-5.2.0.2] - 2022.03.30
 ### Fixed
+- Fixed compatibility with Cyclic's Multi-Jump enchantment [#66](https://github.com/illusivesoulworks/colytra/issues/66)
+
+## [1.18.1-5.2.0.2] - 2022.03.30
+### Fixed
 - Fixed compatibility with Cyclic's Multi-Jump enchantment [#55](https://github.com/TheIllusiveC4/Colytra/issues/55)
 
 ## [1.18.1-5.2.0.1] - 2022.01.15

@@ -1,7 +1,6 @@
 package top.theillusivec4.colytra.common.integration;
 
-import com.lothrazar.cyclic.data.Const;
-import com.lothrazar.cyclic.util.UtilNBT;
+import com.lothrazar.cyclic.util.TagDataUtil;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,7 +26,7 @@ public class CyclicPlugin {
 
       if ((!player.hasImpulse || player.isOnGround()) &&
           armorStack.getOrCreateTag().getInt(NBT_USES) > 0) {
-        UtilNBT.setItemStackNBTVal(armorStack, NBT_USES, 0);
+        TagDataUtil.setItemStackNBTVal(armorStack, NBT_USES, 0);
       }
     }
   }

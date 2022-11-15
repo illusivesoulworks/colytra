@@ -69,7 +69,7 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
     implementation fg.deobf("top.theillusivec4.caelus:caelus-forge:${caelus_version}")
-    implementation fg.deobf("curse.maven:cyclic-239286:3640911")
+    implementation fg.deobf("curse.maven:cyclic-239286:4074871")
 }
 
 def replaceResources = tasks.register("replaceResources", Copy) {
