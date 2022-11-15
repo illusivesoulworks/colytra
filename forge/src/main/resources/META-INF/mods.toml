@@ -30,3 +30,9 @@ Allows attachment of elytras to chestplates.
     versionRange="${caelus_version_range}"
     ordering="NONE"
     side="BOTH"
+[[dependencies.colytra]]
+    modId="cyclic"
+    mandatory=false
+    versionRange="[1.18.2-1.7.13,)"
+    ordering="NONE"
+    side="BOTH"
