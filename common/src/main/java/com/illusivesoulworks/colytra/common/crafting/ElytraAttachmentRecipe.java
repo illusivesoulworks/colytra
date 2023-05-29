@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -34,9 +35,10 @@ import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -44,11 +46,11 @@ import net.minecraft.world.level.Level;
 public class ElytraAttachmentRecipe extends CustomRecipe {
 
   public static final List<Item> VALID_ITEMS = new ArrayList<>();
-  public static final SimpleRecipeSerializer<ElytraAttachmentRecipe> CRAFTING_ATTACH_ELYTRA =
-      new SimpleRecipeSerializer<>(ElytraAttachmentRecipe::new);
+  public static final RecipeSerializer<ElytraAttachmentRecipe> CRAFTING_ATTACH_ELYTRA =
+      new SimpleCraftingRecipeSerializer<>(ElytraAttachmentRecipe::new);
 
-  public ElytraAttachmentRecipe(ResourceLocation id) {
-    super(id);
+  public ElytraAttachmentRecipe(ResourceLocation id, CraftingBookCategory category) {
+    super(id, category);
   }
 
   private static void mergeEnchantments(ItemStack source, ItemStack destination) {
@@ -111,7 +113,8 @@ public class ElytraAttachmentRecipe extends CustomRecipe {
 
   @Nonnull
   @Override
-  public ItemStack assemble(@Nonnull CraftingContainer inv) {
+  public ItemStack assemble(@Nonnull CraftingContainer inv,
+                            @Nonnull RegistryAccess registryAccess) {
     ItemStack itemstack = ItemStack.EMPTY;
     ItemStack elytra = ItemStack.EMPTY;
 

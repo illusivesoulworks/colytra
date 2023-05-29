@@ -21,21 +21,23 @@ import com.illusivesoulworks.colytra.common.ColytraConfig;
 import com.illusivesoulworks.colytra.common.ElytraTag;
 import javax.annotation.Nonnull;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleRecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import net.minecraft.world.level.Level;
 
 public class ElytraDetachmentRecipe extends CustomRecipe {
 
-  public static final SimpleRecipeSerializer<ElytraDetachmentRecipe> CRAFTING_DETACH_ELYTRA =
-      new SimpleRecipeSerializer<>(ElytraDetachmentRecipe::new);
+  public static final RecipeSerializer<ElytraDetachmentRecipe> CRAFTING_DETACH_ELYTRA =
+      new SimpleCraftingRecipeSerializer<>(ElytraDetachmentRecipe::new);
 
-  public ElytraDetachmentRecipe(ResourceLocation id) {
-    super(id);
+  public ElytraDetachmentRecipe(ResourceLocation id, CraftingBookCategory category) {
+    super(id, category);
   }
 
   @Override
@@ -63,7 +65,8 @@ public class ElytraDetachmentRecipe extends CustomRecipe {
 
   @Nonnull
   @Override
-  public ItemStack assemble(@Nonnull CraftingContainer inv) {
+  public ItemStack assemble(@Nonnull CraftingContainer inv,
+                            @Nonnull RegistryAccess registryAccess) {
     ItemStack itemstack = ItemStack.EMPTY;
 
     for (int k = 0; k < inv.getContainerSize(); ++k) {

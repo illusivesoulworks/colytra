@@ -20,15 +20,16 @@ package com.illusivesoulworks.colytra;
 import com.illusivesoulworks.colytra.common.CommonEvents;
 import com.illusivesoulworks.colytra.common.crafting.ElytraAttachmentRecipe;
 import com.illusivesoulworks.colytra.common.crafting.ElytraDetachmentRecipe;
-import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.entity.event.v1.EntityElytraEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 
-public class ColytraFabricMod implements ModInitializer {
+public class ColytraQuiltMod implements ModInitializer {
 
   @Override
-  public void onInitialize() {
+  public void onInitialize(ModContainer modContainer) {
     ColytraCommonMod.init();
     Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
         ColytraConstants.MOD_ID + ":" + ColytraConstants.ATTACH_ELYTRA,

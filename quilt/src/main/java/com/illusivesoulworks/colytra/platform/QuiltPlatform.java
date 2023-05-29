@@ -25,7 +25,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 
-public class FabricPlatform implements IPlatform {
+public class QuiltPlatform implements IPlatform {
 
   @Override
   public Enchantment getEnchantment(ResourceLocation resourceLocation) {
