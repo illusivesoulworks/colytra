@@ -42,45 +42,42 @@ public class ColytraConfig {
 
   public static class Server {
 
-    public final SpectreConfigSpec.EnumValue<PermissionMode> permissionMode;
-    public final SpectreConfigSpec.ConfigValue<List<? extends String>> permissionList;
-    public final SpectreConfigSpec.EnumValue<ColytraMode> colytraMode;
-    public final SpectreConfigSpec.IntValue energyUsage;
+    public final SpectreConfigSpec.EnumValue<ListType> itemListType;
+    public final SpectreConfigSpec.ConfigValue<List<? extends String>> itemsList;
+    public final SpectreConfigSpec.EnumValue<FusionType> fusionType;
+    public final SpectreConfigSpec.IntValue energyCost;
 
     public Server(SpectreConfigSpec.Builder builder) {
-      builder.push("general");
+      itemListType = builder
+          .comment("Determines if itemsList contains allowed items or denied items.")
+          .translation(CONFIG_PREFIX + "itemListType")
+          .defineEnum("itemListType", ListType.DENY);
 
-      permissionMode = builder
-          .comment("Sets whether the permission list is a blacklist or whitelist")
-          .translation(CONFIG_PREFIX + "permissionMode")
-          .defineEnum("permissionMode", PermissionMode.BLACKLIST);
+      itemsList = builder.comment(
+              "The items for crafting with elytras.")
+          .translation(CONFIG_PREFIX + "itemsList")
+          .defineList("itemsList", new ArrayList<>(),
+              s -> s instanceof String str && ResourceLocation.isValidResourceLocation(str));
 
-      permissionList = builder.comment(
-              "List of items by registry name to be blacklisted/whitelisted based on Permission Mode")
-          .translation(CONFIG_PREFIX + "permissionList")
-          .defineList("permissionList", new ArrayList<>(), s -> s instanceof String);
-
-      colytraMode = builder.comment("Sets how the elytra chestplates will behave\n"
+      fusionType = builder.comment("Determines how the combined elytra chestplates will behave.\n"
               + "NORMAL: Elytras will exist separately from the chestplate, "
-              + "able to be separated later\n"
+              + "able to be separated later.\n"
               + "UNISON: Elytras will fuse completely with the chestplate, "
-              + "unable to be separated\n"
+              + "unable to be separated.\n"
               + "PERFECT: Elytras will fuse completely with the chestplate "
-              + "and flying will not use durability").translation(CONFIG_PREFIX + "colytraMode")
-          .defineEnum("colytraMode", ColytraMode.NORMAL);
+              + "and flying will not use durability.").translation(CONFIG_PREFIX + "fusionType")
+          .defineEnum("fusionType", FusionType.NORMAL);
 
-      energyUsage = builder.comment(
-              "How much energy per second elytra flight uses if Unison mode is active and the "
-                  + "chestplate uses energy").translation(CONFIG_PREFIX + "energyUsage")
-          .defineInRange("energyUsage", 1000, 0, Integer.MAX_VALUE);
-
-      builder.pop();
+      energyCost = builder.comment(
+              "The energy cost per second of fall flying if fusionType is UNISON and the "
+                  + "chestplate uses energy.").translation(CONFIG_PREFIX + "energyCost")
+          .defineInRange("energyCost", 1000, 0, Integer.MAX_VALUE);
     }
   }
 
   public static void reload() {
     ElytraAttachmentRecipe.VALID_ITEMS.clear();
-    SERVER.permissionList.get().forEach(id -> {
+    SERVER.itemsList.get().forEach(id -> {
       Item item = Services.PLATFORM.getItem(ResourceLocation.tryParse(id));
 
       if (item != null) {
@@ -89,11 +86,11 @@ public class ColytraConfig {
     });
   }
 
-  public enum PermissionMode {
-    BLACKLIST, WHITELIST
+  public enum ListType {
+    DENY, ALLOW
   }
 
-  public enum ColytraMode {
+  public enum FusionType {
     NORMAL, UNISON, PERFECT
   }
 }

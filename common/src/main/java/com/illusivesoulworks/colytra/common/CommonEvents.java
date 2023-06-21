@@ -46,12 +46,12 @@ public class CommonEvents {
 
     if (!elytraStack.isEmpty() && ElytraTag.isUseable(stack, elytraStack)) {
 
-      if (ColytraConfig.SERVER.colytraMode.get() != ColytraConfig.ColytraMode.PERFECT &&
+      if (ColytraConfig.SERVER.fusionType.get() != ColytraConfig.FusionType.PERFECT &&
           tickElytra) {
         int fallFlyingTicks = livingEntity.getFallFlyingTicks();
         int i = fallFlyingTicks + 1;
 
-        if (!livingEntity.getLevel().isClientSide() && i % 10 == 0) {
+        if (!livingEntity.level().isClientSide() && i % 10 == 0) {
           int j = i / 10;
 
           if (j % 2 == 0) {
@@ -68,8 +68,8 @@ public class CommonEvents {
   public static boolean repairColytraWithXp(ExperienceOrb experienceOrb, Player player,
                                             Consumer<Integer> xpSetter) {
 
-    if (ColytraConfig.SERVER.colytraMode.get() != ColytraConfig.ColytraMode.NORMAL ||
-        player.getLevel().isClientSide()) {
+    if (ColytraConfig.SERVER.fusionType.get() != ColytraConfig.FusionType.NORMAL ||
+        player.level().isClientSide()) {
       return false;
     }
     ItemStack chestStack = player.getItemBySlot(EquipmentSlot.CHEST);
@@ -112,7 +112,7 @@ public class CommonEvents {
                                                                   ItemStack ingredient,
                                                                   String name) {
 
-    if (ColytraConfig.SERVER.colytraMode.get() != ColytraConfig.ColytraMode.NORMAL) {
+    if (ColytraConfig.SERVER.fusionType.get() != ColytraConfig.FusionType.NORMAL) {
       return EMPTY_RESULT;
     }
     ItemStack stack = ElytraTag.getElytra(input);

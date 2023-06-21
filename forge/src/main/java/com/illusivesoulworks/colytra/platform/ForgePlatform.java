@@ -23,8 +23,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.energy.CapabilityEnergy;
 import net.minecraftforge.energy.IEnergyStorage;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -42,20 +42,20 @@ public class ForgePlatform implements IPlatform {
 
   @Override
   public void extractEnergy(ItemStack stack) {
-    LazyOptional<IEnergyStorage> energyStorage = stack.getCapability(CapabilityEnergy.ENERGY);
+    LazyOptional<IEnergyStorage> energyStorage = stack.getCapability(ForgeCapabilities.ENERGY);
     energyStorage.ifPresent(
-        energy -> energy.extractEnergy(ColytraConfig.SERVER.energyUsage.get(), false));
+        energy -> energy.extractEnergy(ColytraConfig.SERVER.energyCost.get(), false));
   }
 
   @Override
   public boolean hasEnergy(ItemStack stack) {
-    return stack.getCapability(CapabilityEnergy.ENERGY).isPresent();
+    return stack.getCapability(ForgeCapabilities.ENERGY).isPresent();
   }
 
   @Override
   public boolean canExtractEnergy(ItemStack stack) {
-    LazyOptional<IEnergyStorage> energyStorage = stack.getCapability(CapabilityEnergy.ENERGY);
+    LazyOptional<IEnergyStorage> energyStorage = stack.getCapability(ForgeCapabilities.ENERGY);
     return energyStorage.map(energy -> energy.canExtract() &&
-        energy.getEnergyStored() > ColytraConfig.SERVER.energyUsage.get()).orElse(false);
+        energy.getEnergyStored() > ColytraConfig.SERVER.energyCost.get()).orElse(false);
   }
 }

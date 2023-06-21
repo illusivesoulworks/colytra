@@ -56,7 +56,7 @@ public class ClientEvents {
       tooltip.add(Component.translatable("item.minecraft.elytra").withStyle(ChatFormatting.AQUA));
     }
 
-    if (ColytraConfig.SERVER.colytraMode.get() == ColytraConfig.ColytraMode.NORMAL) {
+    if (ColytraConfig.SERVER.fusionType.get() == ColytraConfig.FusionType.NORMAL) {
 
       if (elytraStack.hasTag()) {
         int i = 0;

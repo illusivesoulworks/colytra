@@ -43,7 +43,7 @@ public class ElytraDetachmentRecipe extends CustomRecipe {
   @Override
   public boolean matches(@Nonnull CraftingContainer inv, @Nonnull Level worldIn) {
 
-    if (ColytraConfig.SERVER.colytraMode.get() != ColytraConfig.ColytraMode.NORMAL) {
+    if (ColytraConfig.SERVER.fusionType.get() != ColytraConfig.FusionType.NORMAL) {
       return false;
     }
     ItemStack itemstack = ItemStack.EMPTY;

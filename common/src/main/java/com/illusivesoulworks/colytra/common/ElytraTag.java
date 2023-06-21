@@ -44,12 +44,12 @@ public class ElytraTag {
 
   public static void damageElytra(LivingEntity livingEntity, ItemStack chestStack,
                                   ItemStack elytraStack, int amount) {
-    ColytraConfig.ColytraMode colytraMode = ColytraConfig.SERVER.colytraMode.get();
+    ColytraConfig.FusionType fusionType = ColytraConfig.SERVER.fusionType.get();
 
-    if (colytraMode == ColytraConfig.ColytraMode.NORMAL) {
+    if (fusionType == ColytraConfig.FusionType.NORMAL) {
       elytraStack.hurtAndBreak(amount, livingEntity,
           damager -> damager.broadcastBreakEvent(EquipmentSlot.CHEST));
-    } else if (colytraMode == ColytraConfig.ColytraMode.UNISON) {
+    } else if (fusionType == ColytraConfig.FusionType.UNISON) {
 
       if (Services.PLATFORM.hasEnergy(chestStack)) {
         Services.PLATFORM.extractEnergy(chestStack);
@@ -66,11 +66,11 @@ public class ElytraTag {
     if (elytraStack.isEmpty()) {
       return false;
     }
-    ColytraConfig.ColytraMode colytraMode = ColytraConfig.SERVER.colytraMode.get();
+    ColytraConfig.FusionType fusionType = ColytraConfig.SERVER.fusionType.get();
 
-    if (colytraMode == ColytraConfig.ColytraMode.NORMAL) {
+    if (fusionType == ColytraConfig.FusionType.NORMAL) {
       return elytraStack.getItem() instanceof ElytraItem && ElytraItem.isFlyEnabled(elytraStack);
-    } else if (colytraMode == ColytraConfig.ColytraMode.UNISON) {
+    } else if (fusionType == ColytraConfig.FusionType.UNISON) {
 
       if (Services.PLATFORM.hasEnergy(chestStack)) {
         return Services.PLATFORM.canExtractEnergy(chestStack);

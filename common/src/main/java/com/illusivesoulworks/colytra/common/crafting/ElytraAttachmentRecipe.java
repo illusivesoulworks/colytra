@@ -143,7 +143,7 @@ public class ElytraAttachmentRecipe extends CustomRecipe {
 
     if (!itemstack.isEmpty() && !elytra.isEmpty()) {
 
-      if (ColytraConfig.SERVER.colytraMode.get() != ColytraConfig.ColytraMode.NORMAL) {
+      if (ColytraConfig.SERVER.fusionType.get() != ColytraConfig.FusionType.NORMAL) {
         mergeEnchantments(elytra, itemstack);
         itemstack.setRepairCost(elytra.getBaseRepairCost() + itemstack.getBaseRepairCost());
         Component name = elytra.getHoverName();
@@ -173,8 +173,8 @@ public class ElytraAttachmentRecipe extends CustomRecipe {
   }
 
   private static boolean isValid(ItemStack stack) {
-    ColytraConfig.PermissionMode permissionMode = ColytraConfig.SERVER.permissionMode.get();
-    boolean isBlacklist = permissionMode == ColytraConfig.PermissionMode.BLACKLIST;
+    ColytraConfig.ListType listType = ColytraConfig.SERVER.itemListType.get();
+    boolean isBlacklist = listType == ColytraConfig.ListType.DENY;
     return isBlacklist != VALID_ITEMS.contains(stack.getItem()) &&
         Mob.getEquipmentSlotForItem(stack) == EquipmentSlot.CHEST &&
         !(stack.getItem() instanceof ElytraItem);

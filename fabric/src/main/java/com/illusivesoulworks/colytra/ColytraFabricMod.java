@@ -29,7 +29,6 @@ public class ColytraFabricMod implements ModInitializer {
 
   @Override
   public void onInitialize() {
-    ColytraCommonMod.init();
     Registry.register(BuiltInRegistries.RECIPE_SERIALIZER,
         ColytraConstants.MOD_ID + ":" + ColytraConstants.ATTACH_ELYTRA,
         ElytraAttachmentRecipe.CRAFTING_ATTACH_ELYTRA);

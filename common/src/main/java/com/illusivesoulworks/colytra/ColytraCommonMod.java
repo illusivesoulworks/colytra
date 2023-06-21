@@ -27,7 +27,6 @@ public class ColytraCommonMod {
     SpectreConfig config =
         SpectreConfigLoader.add(SpectreConfig.Type.SERVER, ColytraConfig.SERVER_SPEC,
             ColytraConstants.MOD_ID);
-    config.addLoadListener(configFile -> ColytraConfig.reload());
-    config.addReloadListener(configFile -> ColytraConfig.reload());
+    config.addLoadListener((cfg, flag) -> ColytraConfig.reload());
   }
 }
