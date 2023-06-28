@@ -2,9 +2,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/colytra/blob/1.20.x/CHANGELOG.md).
 
-## [6.2.0+1.20.1] - 2023.06.21
-### Added
-- Added in-game configuration GUI
-### Changed
-- Updated to Minecraft 1.20.1
-- Configuration options have been renamed with new updated comments
+## [6.2.1+1.20.1] - 2023.06.28
+### Fixed
+- Fixed configuration crashes [#68](https://github.com/illusivesoulworks/colytra/issues/68)

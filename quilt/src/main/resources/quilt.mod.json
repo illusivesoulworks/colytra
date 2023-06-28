@@ -36,6 +36,10 @@
       {
         "id": "quilted_fabric_api",
         "version": "*"
+      },
+      {
+        "id": "spectrelib",
+        "version": ">=0.13"
       }
     ],
     "metadata": {
